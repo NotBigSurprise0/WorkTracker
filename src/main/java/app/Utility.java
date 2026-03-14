@@ -43,8 +43,16 @@ public class Utility
         return sb.toString();
     }
 
+    /**
+     * Formats a duration in hours minutes and seconds when they aren't 0.
+     * 
+     * @param duration The duration to format
+     * @return The duration formatted as a String
+     */
     public static String formatDuration(Duration duration)
     {
+        if (duration == null) throw new NullPointerException("Duration cannot be null.");
+
         long hours = duration.toHours();
         long minutes = duration.toMinutesPart();
         long seconds = duration.toSecondsPart();

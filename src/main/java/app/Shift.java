@@ -28,11 +28,12 @@ public class Shift
      * @param job The job the shift is for (cannot be {@code null})
      * @param start The start time of the shift (cannot be {@code null}) (cannot be after {@code end})
      * @param end The end time of the shift (cannot be {@code null}) (cannot be before {@code start})
-     * @throws IllegalArgumentException If any argument is {@code null} or {@code start} is after {@code end}
+     * @throws NullPointerException If any argument is {@code null}
+     * @throws IllegalArgumentException If {@code start} is after {@code end}
      */
     public Shift(String name, Job job, LocalDateTime start, LocalDateTime end)
     {
-        if (name == null || job == null || start == null || end == null) throw new IllegalArgumentException("Arguments cannot be null.");
+        if (name == null || job == null || start == null || end == null) throw new NullPointerException("Arguments cannot be null.");
 
         Duration calculatedDuration = Duration.between(start, end);
         if (calculatedDuration.isNegative()) throw new IllegalArgumentException("End cannot be before start.");
@@ -55,7 +56,8 @@ public class Shift
      * @param job The job the shift is for (cannot be {@code null})
      * @param start The start time of the shift (cannot be {@code null}) (cannot be after {@code end})
      * @param end The end time of the shift (cannot be {@code null}) (cannot be before {@code start})
-     * @throws IllegalArgumentException If any argument is {@code null} or {@code start} is after {@code end}
+     * @throws NullPointerException If any argument is {@code null}
+     * @throws IllegalArgumentException If {@code start} is after {@code end}
      */
     public Shift(Job job, LocalDateTime start, LocalDateTime end)
     {
@@ -69,11 +71,12 @@ public class Shift
      * @param job The job the shift is for (cannot be {@code null})
      * @param start The start time of the shift (cannot be {@code null})
      * @param duration The duration of the shift (cannot be {@code null}) (cannot be negative)
-     * @throws IllegalArgumentException If any argument is {@code null} or {@code duration} is negative
+     * @throws NullPointerException If any argument is {@code null}
+     * @throws IllegalArgumentException If {@code duration} is negative
      */
     public Shift(String name, Job job, LocalDateTime start, Duration duration)
     {
-        if (name == null || job == null || start == null || duration == null) throw new IllegalArgumentException("Arguments cannot be null.");
+        if (name == null || job == null || start == null || duration == null) throw new NullPointerException("Arguments cannot be null.");
         if (duration.isNegative()) throw new IllegalArgumentException("Duration cannot be negative.");
 
         LocalDateTime calculatedEnd = start.plus(duration);
@@ -96,7 +99,8 @@ public class Shift
      * @param job The job the shift is for (cannot be {@code null})
      * @param start The start time of the shift (cannot be {@code null}) (cannot be after {@code end})
      * @param duration The duration of the shift (cannot be {@code null}) (cannot be negative)
-     * @throws IllegalArgumentException If any argument is {@code null} or {@code duration} is negative
+     * @throws NullPointerException If any argument is {@code null}
+     * @throws IllegalArgumentException If {@code duration} is negative
      */
     public Shift(Job job, LocalDateTime start, Duration duration)
     {
@@ -186,11 +190,14 @@ public class Shift
      * If {@code displayMode} == {@code DisplayMode.Duration} then the {@code Shift} is displayed in a readable format that contains the start date and duration of the {@code Shift}.
      * If {@code displayMode} == {@code DisplayMode.Times} then the {@code Shift} is displayed in a readable format that contains the start date and end date of the {@code Shift}.
      * 
-     * @param displayMode The method in which the {@code Shift} will be displayed
+     * @param displayMode The method in which the {@code Shift} will be displayed (cannot be null)
      * @return The formatted string
+     * @throws NullPointerException If {@code displayMode} is {@code null}
      */
     public String display(DisplayMode displayMode)
     {
+        if (displayMode == null) throw new NullPointerException("DisplayMode cannot be null.");
+
         return switch (displayMode)
         {
             case Detailed -> detailedDisplay();

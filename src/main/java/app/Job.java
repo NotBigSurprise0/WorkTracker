@@ -13,7 +13,7 @@ public class Job
      */
     public Job(String name)
     {
-        if (name == null) throw new IllegalArgumentException("Cannot create a job with a null name.");
+        if (name == null) throw new NullPointerException("Cannot create a job with a null name.");
 
         this.name = name;
     }
@@ -27,7 +27,7 @@ public class Job
      */
     public Job(String name, double hourlyPay)
     {
-        if (name == null) throw new IllegalArgumentException("Cannot create a job with a null name.");
+        if (name == null) throw new NullPointerException("Cannot create a job with a null name.");
         if (hourlyPay < 0) throw new IllegalArgumentException("Cannot have an hourly pay that is negative.");
 
         this.name = name;
@@ -91,6 +91,7 @@ public class Job
     @Override
     public boolean equals(Object other)
     {
+        if (other == null) return false;
         if (!(other instanceof Job)) return false;
 
         Job otherJob = (Job)other;
