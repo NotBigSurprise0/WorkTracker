@@ -2,9 +2,12 @@ package app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Menu
 {
+    private static final Scanner scanner = new Scanner(System.in);
+
     private String header;
     private List<String> options;
 
@@ -59,5 +62,42 @@ public class Menu
 
         this.header = header;
         this.options = new ArrayList<>(options);
+    }
+
+    /**
+     * Displays the menu and gets the choice option from the user. 0 is always permitted for exiting.
+     * 
+     * @return The choice number
+     */
+    public int display()
+    {
+        int size = this.options.size();
+
+        int choice = -1;
+        while (choice < 0 || choice > size)
+        {
+            if (!this.header.equals("")) System.out.println(this.header);
+
+            for (int i = 0; i < size; i++)
+            {
+                System.out.print((i + 1) + ": ");
+                System.out.println(this.options.get(i));
+            }
+            System.out.println("0: Exit");
+            System.out.println();
+            System.out.print("Choice: ");
+            if (scanner.hasNextInt())
+            {
+                choice = scanner.nextInt();
+                if (choice < 0 || choice > size)
+                    System.out.println("Invalid choice. Must be one of the options 0-" + size);
+            }
+            else
+            {
+                System.out.println("That is not a number.");
+                scanner.next();
+            }
+        }
+        return choice;
     }
 }
