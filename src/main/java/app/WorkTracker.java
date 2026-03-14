@@ -1,7 +1,6 @@
 package app;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,11 +16,14 @@ public class WorkTracker
     /**
      * Initializes jobs and shifts from the given file.
      * 
-     * @param file The file that
-     * @throws FileNotFoundException
+     * @param file The file to read from to get job and shift data or to create if one doesn't exist (cannot be {@code null})
+     * @throws IOException I actually do not know when this occurrs
+     * @throws NullPointerException If {@code file} is {@code null}
      */
-    public WorkTracker(File file) throws IOException
+    public WorkTracker(File file) throws IOException, NullPointerException
     {
+        if (file == null) throw new NullPointerException("File cannot be null");
+
         this.file = file;
         if (file.createNewFile())
         {
