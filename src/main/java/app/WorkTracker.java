@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
 
 public class WorkTracker
@@ -95,6 +96,47 @@ public class WorkTracker
         ArrayList<Shift> jobShifts = this.shifts.get(job);
         jobShifts.add(shift);
         return true;
+    }
+
+    /**
+     * Gets the set of jobs.
+     * 
+     * @return The set of jobs
+     */
+    public HashSet<Job> getJobs()
+    {
+        return this.jobs;
+    }
+
+    /**
+     * Gets the shifts for a job if the job exists.
+     * 
+     * @param job The job to get all the shifts for (cannot be {@code null})
+     * @return The list of {@code Shift}s for the job if the job exists, otherwise null
+     * @throws NullPointerException If {@code job} is {@code null}
+     */
+    public List<Shift> getShifts(Job job)
+    {
+        if (job == null) throw new NullPointerException("Job cannot be null.");
+
+        List<Shift> jobShifts = this.shifts.get(job);
+        return jobShifts;
+    }
+
+    /**
+     * Gets all the shifts that exist.
+     * 
+     * @return The list of all {@code Shift}s
+     */
+    public List<Shift> getAllShifts()
+    {
+        List<Shift> allShifts = new ArrayList<>();
+        for (Job job : this.jobs)
+        {
+            List<Shift> jobShifts = this.getShifts(job);
+            allShifts.addAll(jobShifts);
+        }
+        return allShifts;
     }
 
     /**
