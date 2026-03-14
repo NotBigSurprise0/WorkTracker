@@ -39,7 +39,7 @@ public class Job
      * 
      * @return The hourly pay
      */
-    public double getHourlyPay()
+    public double getCurrentHourlyPay()
     {
         return this.hourlyPay;
     }
@@ -70,6 +70,12 @@ public class Job
 
         this.hourlyPay = newRate;
         return true;
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.name + ": " + Utility.formatPay(this.hourlyPay);
     }
 
     @Override
