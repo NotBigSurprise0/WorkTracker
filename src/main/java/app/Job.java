@@ -35,6 +35,16 @@ public class Job
     }
 
     /**
+     * Gets the name of the job.
+     * 
+     * @return The name of the job
+     */
+    public String getName()
+    {
+        return this.name;
+    }
+
+    /**
      * Gets the hourly pay for the job.
      * 
      * @return The hourly pay
