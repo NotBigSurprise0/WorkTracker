@@ -132,6 +132,19 @@ public class Menu
     }
 
     /**
+     * Adds an option to the list of options.
+     * 
+     * @param option The option (cannot be {@code null})
+     * @throws NullPointerException if {@code option} is {@code null}
+     */
+    public void addOption(String option)
+    {
+        if (option == null) throw new NullPointerException("Option cannot be null.");
+
+        options.add(option);
+    }
+
+    /**
      * Displays the menu and gets the choice option from the user. 0 is always permitted for exiting.
      * 
      * @return The choice number
