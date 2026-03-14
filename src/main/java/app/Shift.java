@@ -232,4 +232,21 @@ public class Shift
     {
         return this.display(DisplayMode.Detailed);
     }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (other == null) return false;
+
+        if (!(other instanceof Shift)) return false;
+
+        Shift othershift = (Shift)other;
+        return this.id == othershift.id;
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return this.id;
+    }
 }
