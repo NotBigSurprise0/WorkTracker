@@ -5,9 +5,43 @@ public class Job
     private String name;
     private double hourlyPay;
 
+    /**
+     * Creates a job with the given name and an unspecified hourly pay.
+     * 
+     * @param name The name of the job (cannot be null)
+     * @throws IllegalArgumentException If the name is null
+     */
     public Job(String name)
     {
+        if (name == null) throw new IllegalArgumentException("Cannot create a job with a null name.");
+
         this.name = name;
+    }
+
+    /**
+     * Creates a job with the given name and hourly pay.
+     * 
+     * @param name The name of the job (cannot be null)
+     * @param hourlyPay The hourly pay (cannot be negative)
+     * @throws IllegalArgumentException If the name is null or hourly pay is negative
+     */
+    public Job(String name, double hourlyPay)
+    {
+        if (name == null) throw new IllegalArgumentException("Cannot create a job with a null name.");
+        if (hourlyPay < 0) throw new IllegalArgumentException("Cannot have an hourly pay that is negative.");
+
+        this.name = name;
+        this.hourlyPay = hourlyPay;
+    }
+
+    /**
+     * Gets the hourly pay for the job.
+     * 
+     * @return The hourly pay
+     */
+    public double getHourlyPay()
+    {
+        return this.hourlyPay;
     }
 
     /**
