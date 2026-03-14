@@ -16,6 +16,7 @@ public class Job
         if (name == null) throw new NullPointerException("Cannot create a job with a null name.");
 
         this.name = name;
+        this.hourlyPay = -1;
     }
 
     /**
@@ -85,6 +86,8 @@ public class Job
     @Override
     public String toString()
     {
+        if (this.hourlyPay == -1) return this.name + ": Unknown pay";
+
         return this.name + ": " + Utility.formatPay(this.hourlyPay);
     }
 
