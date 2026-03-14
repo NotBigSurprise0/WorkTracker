@@ -44,15 +44,12 @@ public class Job
         if (!(other instanceof Job)) return false;
 
         Job otherJob = (Job)other;
-        return this.name.equals(otherJob.name) && this.hourlyPay == otherJob.hourlyPay;
+        return this.name.equals(otherJob.name);
     }
 
     @Override
     public int hashCode()
     {
-        int result = 17;
-        result = 31 * result + name.hashCode();
-        result = 31 * result + ((Double)hourlyPay).hashCode();
-        return result;
+        return name.hashCode();
     }
 }
