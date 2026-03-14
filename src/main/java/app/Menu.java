@@ -10,18 +10,32 @@ public class Menu
 
     private String header;
     private List<String> options;
+    private boolean hasOption0;
 
     /**
-     * Creates a menu with no options or header.
+     * Creates a menu with no options or header with a default option 0.
      */
     public Menu()
     {
         this.header = "";
         this.options = new ArrayList<>();
+        this.hasOption0 = true;
     }
 
     /**
-     * Creates a menu with the given header and no options.
+     * Creates a menu with no options or header with a default option 0 if {@code hasOption0} is {@code true}.
+     * 
+     * @param hasOption0 Determines if the menu should have a default option 0
+     */
+    public Menu(boolean hasOption0)
+    {
+        this.header = "";
+        this.options = new ArrayList<>();
+        this.hasOption0 = hasOption0;
+    }
+
+    /**
+     * Creates a menu with the given header and no options with a default option 0.
      * 
      * @param header The header String to appear above the menu (cannot be {@code null})
      * @throws NullPointerException If {@code header} is {@code null}
@@ -32,10 +46,27 @@ public class Menu
 
         this.header = header;
         this.options = new ArrayList<>();
+        this.hasOption0 = true;
+    }
+
+    /**
+     * Creates a menu with the given header and no options with a default option 0 if {@code hasOption0} is {@code true}.
+     * 
+     * @param header The header String to appear above the menu (cannot be {@code null})
+     * @param hasOption0 Determines if the menu should have a default option 0
+     * @throws NullPointerException If {@code header} is {@code null}
+     */
+    public Menu(String header, boolean hasOption0)
+    {
+        if (header == null) throw new NullPointerException("Header cannot be null.");
+
+        this.header = header;
+        this.options = new ArrayList<>();
+        this.hasOption0 = hasOption0;
     }
     
     /**
-     * Creates a menu with the given options and no header.
+     * Creates a menu with the given options and no header with a default option 0.
      * 
      * @param options The list of options to show on the menu (cannot be {@code null})
      * @throws NullPointerException If {@code options} is {@code null}
@@ -46,10 +77,27 @@ public class Menu
 
         this.header = "";
         this.options = new ArrayList<>(options);
+        this.hasOption0 = true;
     }
 
     /**
-     * Creates a menu with the given options and header.
+     * Creates a menu with the given options and no header with a default option 0 if {@code hasOption0} is {@code true}.
+     * 
+     * @param options The list of options to show on the menu (cannot be {@code null})
+     * @param hasOption0 Determines if the menu should have a default option 0
+     * @throws NullPointerException If {@code options} is {@code null}
+     */
+    public Menu(List<String> options, boolean hasOption0)
+    {
+        if (options == null) throw new NullPointerException("Options cannot be null.");
+
+        this.header = "";
+        this.options = new ArrayList<>(options);
+        this.hasOption0 = hasOption0;
+    }
+
+    /**
+     * Creates a menu with the given options and header with a default option 0.
      * 
      * @param header The header String to appear above the menu (cannot be {@code null})
      * @param options The list of options to show on the menu (cannot be {@code null})
@@ -62,6 +110,25 @@ public class Menu
 
         this.header = header;
         this.options = new ArrayList<>(options);
+        this.hasOption0 = true;
+    }
+
+    /**
+     * Creates a menu with the given options and header with a default option 0 if {@code hasOption0} is {@code true}.
+     * 
+     * @param header The header String to appear above the menu (cannot be {@code null})
+     * @param options The list of options to show on the menu (cannot be {@code null})
+     * @param hasOption0 Determines if the menu should have a default option 0
+     * @throws NullPointerException If {@code header} or {@code options} is {@code null}
+     */
+    public Menu(String header, List<String> options, boolean hasOption0)
+    {
+        if (header == null) throw new NullPointerException("Header cannot be null.");
+        if (options == null) throw new NullPointerException("Options cannot be null.");
+
+        this.header = header;
+        this.options = new ArrayList<>(options);
+        this.hasOption0 = hasOption0;
     }
 
     /**
@@ -73,8 +140,12 @@ public class Menu
     {
         int size = this.options.size();
 
+        int minChoice;
+        if (this.hasOption0) minChoice = 0;
+        else minChoice = 1;
+
         int choice = -1;
-        while (choice < 0 || choice > size)
+        while (choice < minChoice || choice > size)
         {
             if (!this.header.equals("")) System.out.println(this.header);
 
@@ -89,8 +160,8 @@ public class Menu
             if (scanner.hasNextInt())
             {
                 choice = scanner.nextInt();
-                if (choice < 0 || choice > size)
-                    System.out.println("Invalid choice. Must be one of the options 0-" + size);
+                if (choice < minChoice || choice > size)
+                    System.out.println("Invalid choice. Must be one of the options " + minChoice + "-" + size);
             }
             else
             {
