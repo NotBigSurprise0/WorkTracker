@@ -47,6 +47,57 @@ public class WorkTracker
     }
 
     /**
+     * Determines if the job exists in the set of jobs.
+     * 
+     * @param job The job to check (cannot be {@code null})
+     * @return {@code true} if {@code job} exists in the set of jobs, otherwise {@code false}
+     * @throws NullPointerException If {@code job} is {@code null}
+     */
+    public boolean jobExists(Job job)
+    {
+        if (job == null) throw new NullPointerException("Job cannot be null.");
+
+        return this.jobs.contains(job);
+    }
+
+    /**
+     * Adds a job to the set of jobs if it doesn't already exist.
+     * 
+     * @param job The job to add (cannot be {@code null})
+     * @return {@code true} if {@code job} was successfully added to jobs ({@code job} was not in the set of jobs already), otherwise {@code false}
+     * @throws NullPointerException If {@code job} is {@code null}
+     */
+    public boolean addJob(Job job)
+    {
+        if (job == null) throw new NullPointerException("Job cannot be null.");
+
+        if (this.jobExists(job)) return false;
+
+        this.jobs.add(job);
+        this.shifts.put(job, new ArrayList<>());
+        return true;
+    }
+
+    /**
+     * Adds a shift if the shift is valid.
+     * 
+     * @param shift The shift to add with a valid job (cannot be {@code null})
+     * @return {@code true} if {@code shift} was successfully added ({@code shift}'s job existed in jobs), otherwise {@code false}
+     * @throws NullPointerException If {@code shift} is {@code null}
+     */
+    public boolean addShift(Shift shift)
+    {
+        if (shift == null) throw new NullPointerException("Shift cannot be null.");
+
+        Job job = shift.getJob();
+        if (!this.jobExists(job)) return false;
+
+        ArrayList<Shift> jobShifts = this.shifts.get(job);
+        jobShifts.add(shift);
+        return true;
+    }
+
+    /**
      * Saves the jobs and shifts data to the file.
      */
     public void save()

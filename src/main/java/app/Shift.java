@@ -108,6 +108,26 @@ public class Shift
     }
 
     /**
+     * Gets the name representing the {@code Shift}.
+     * 
+     * @return The name representing the {@code Shift}
+     */
+    public String getName()
+    {
+        return this.name;
+    }
+
+    /**
+     * Gets the job for the {@code Shift}.
+     * 
+     * @return The {@code Shift}'s job
+     */
+    public Job getJob()
+    {
+        return this.job;
+    }
+
+    /**
      * Displays all the fields for the {@code Shift}.
      * 
      * @return The string containing the fields of the {@code Shift} in a readable format
