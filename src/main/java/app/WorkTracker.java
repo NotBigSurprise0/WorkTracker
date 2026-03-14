@@ -12,7 +12,7 @@ public class WorkTracker
 {
     private HashSet<Job> jobs;
     private HashMap<Job, ArrayList<Shift>> shifts;
-    private File file;
+    private File destinationFile;
 
     /**
      * Initializes jobs and shifts from the given file.
@@ -25,25 +25,24 @@ public class WorkTracker
     {
         if (file == null) throw new NullPointerException("File cannot be null");
 
-        this.file = file;
-        if (file.createNewFile())
+        this.destinationFile = file;
+        if (!file.exists())
         {
             this.jobs = new HashSet<>();
             this.shifts = new HashMap<>();
+            return;
         }
-        else
+        
+        try (Scanner scanner = new Scanner(file))
         {
-            try (Scanner scanner = new Scanner(file))
-            {
-                //! COMPLETE
-                this.jobs = new HashSet<>();
-                this.shifts = new HashMap<>();
-            }
-            catch (IOException e)
-            {
-                System.out.println("An unexpected file error occurred.");
-                System.out.println(e);
-            }
+            //! COMPLETE
+            this.jobs = new HashSet<>();
+            this.shifts = new HashMap<>();
+        }
+        catch (IOException e)
+        {
+            System.out.println("An unexpected file error occurred.");
+            System.out.println(e);
         }
     }
 
