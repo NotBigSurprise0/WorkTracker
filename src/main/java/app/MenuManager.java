@@ -343,15 +343,15 @@ public class MenuManager
     /**
      * Gets a non negative integer from the user and reprompts until the number is valid, or the user types '!'.
      * 
-     * @param text The message to display to the user when prompting for the number
+     * @param message The message to display to the user when prompting for the number
      * @return The non negative integer from the user if the user didn't exit, otherwise {@code null} because the user exited
      */
-    private static Integer getNonNegativeInteger(String text)
+    private static Integer getNonNegativeInteger(String message)
     {
         Integer num = -1;
         while (num < 0)
         {
-            System.out.print(text);
+            System.out.print(message);
             if (scanner.hasNextInt())
             {
                 num = scanner.nextInt();
@@ -406,26 +406,27 @@ public class MenuManager
         return duration;
     }
 
-    private void addShiftMenu()
+    /**
+     * Gets the valid Job object that exists in the tracked jobs from user input.
+     * 
+     * @param message The message displayed the the user when prompting
+     * @return The {@code Job} if the user didn't exit, otherwise {@code null} because the user exited
+     */
+    private Job getValidJob(String message)
     {
         List<Job> jobs = workTracker.getJobs();
-        if (jobs.isEmpty())
-        {
-            System.out.println("No jobs exist. Have you tried adding a job? Exiting...\n");
-            return;
-        } 
 
         Job matchingJob = null;
         boolean jobExists = false;
         while (matchingJob == null || !jobExists)
         {
-            System.out.println("Enter the job this shift is for ('!' to exit)");
+            System.out.println(message);
             System.out.println("Valid jobs: " + jobs.toString());
-            String name = scanner.nextLine();
+            String name = scanner.nextLine().trim();
             if (name.equals("!"))
             {
                 System.out.println("Exiting...\n");
-                return;
+                return null;
             }
 
             Job job = new Job(name);
@@ -439,6 +440,19 @@ public class MenuManager
                 matchingJob = workTracker.getMatchingJob(job);
             }
         }
+        return matchingJob;
+    }
+
+    private void addShiftMenu()
+    {
+        List<Job> jobs = workTracker.getJobs();
+        if (jobs.isEmpty())
+        {
+            System.out.println("No jobs exist. Have you tried adding a job? Exiting...\n");
+            return;
+        } 
+
+        Job matchingJob = this.getValidJob("Enter the job this shift is for ('!' to exit)");
 
         LocalDate startDate = getDate("start date");
         if (startDate == null) return;
@@ -450,6 +464,40 @@ public class MenuManager
         Duration duration = getDuration("shift");
         if (duration == null) return;
 
-        
+        System.out.print("This shift is from " + start.format(Shift.DEFAULT_DATETIME_FORMAT) + " to " + start.plus(duration).format(Shift.DEFAULT_DATETIME_FORMAT) + ". Is this correct? ('y' for yes, anything else for no): ");
+        if (!scanner.nextLine().trim().equalsIgnoreCase("Y"))
+        {
+            System.out.println("Exiting...\n");
+            return;
+        }
+
+        System.out.print("Do you want to name the shift or use a default name ('y' for name, anything else for default): ");
+        if (scanner.nextLine().trim().equalsIgnoreCase("Y"))
+        {
+            System.out.print("Enter the name ('!' to exit): ");
+            String name = scanner.nextLine().trim();
+            if (name.equals("!"))
+            {
+                System.out.println("Exiting...\n");
+                return;
+            }
+
+            Shift shift = new Shift(name, matchingJob, start, duration);
+            boolean success = this.workTracker.addShift(shift);
+            if (success)
+                System.out.println("Shift: " + shift.getName() + "added successfully.");
+            else
+                System.out.println("An error occurred and the shift was not added successfully.");
+        }
+        else
+        {
+            Shift shift = new Shift(matchingJob, start, duration);
+            boolean success = this.workTracker.addShift(shift);
+            if (success)
+                System.out.println("Shift: " + shift.getName() + "added successfully.");
+            else
+                System.out.println("An error occurred and the shift was not added successfully.");
+        }
+        System.out.println();
     }
 }

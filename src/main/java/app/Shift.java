@@ -9,7 +9,7 @@ import app.enums.DisplayMode;
 public class Shift
 {
     private static final String DEFAULT_NAME = "Unnamed";
-    private static final DateTimeFormatter DEFAULT_DATETIME_FORMAT = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy 'at' h:mm a");
+    public static final DateTimeFormatter DEFAULT_DATETIME_FORMAT = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy 'at' h:mm a");
 
     private static int nextId = 1;
 
