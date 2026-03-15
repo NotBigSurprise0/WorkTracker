@@ -12,7 +12,10 @@ public class Utility
         sb.append(wholePart);
         sb.append(".");
         int decimalPart = (int)Math.round(pay * 100) % 100;
-        sb.append(decimalPart);
+        int tenth = decimalPart / 10;
+        int hundredth = decimalPart % 10;
+        sb.append(tenth);
+        sb.append(hundredth);
         return sb.toString();
     }
 

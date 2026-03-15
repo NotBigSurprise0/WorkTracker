@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
+import app.enums.DisplayMode;
+
 public class MenuManager
 {
     private static final Menu MAIN_MENU = new Menu("---Main Menu---");
@@ -44,6 +46,15 @@ public class MenuManager
     }
 
     /**
+     * Waits for the user to press enter before continuing.
+     */
+    public static void pause()
+    {
+        System.out.print("Press enter to continue...");
+        scanner.nextLine();
+    }
+
+    /**
      * Runs the MenuManager allowing for the user to choose from menus.
      */
     public void run()
@@ -63,6 +74,13 @@ public class MenuManager
                 case 7 -> this.loadAllShiftsMenu();
                 default -> {}
             }
+            if (choice != 0)
+            {
+                System.out.println();
+                pause();
+                System.out.println();
+            }
+
         }
     }
 
@@ -79,8 +97,13 @@ public class MenuManager
             String name = scanner.nextLine().trim();
             if (name.equals("!"))
             {
-                System.out.println("Exiting...\n");
+                System.out.println("Exiting...");
                 return;
+            }
+            else if (name.isBlank())
+            {
+                System.out.println("Cannot have a blank name for a job...");
+                continue;
             }
             
             job = new Job(name);
@@ -90,10 +113,11 @@ public class MenuManager
         double pay = -2;
         while (pay < 0 && pay != -1)
         {
-            System.out.print("Enter the hourly pay for the job in dollars (enter -1 if unknown and '!' to exit)");
-            if (scanner.hasNextInt())
+            System.out.print("Enter the hourly pay for the job in dollars (enter -1 if unknown or '!' to exit): ");
+            if (scanner.hasNextDouble())
             {
-                pay = scanner.nextInt();
+                pay = scanner.nextDouble();
+                scanner.nextLine();
                 if (pay < 0 && pay != -1)
                 {
                     System.out.println("Invalid amount! Can't be negative.");
@@ -103,12 +127,11 @@ public class MenuManager
             {
                 if (scanner.nextLine().trim().equals("!"))
                 {
-                    System.out.println("Exiting...\n");
+                    System.out.println("Exiting...");
                     return;
                 }
 
                 System.out.println("That is not a number!");
-                scanner.next();
             }
         }
         if (pay != -1) job.updateHourlyPay(pay);
@@ -118,7 +141,6 @@ public class MenuManager
             System.out.println("Successfully added job " + job.getName() + ".");
         else
             System.out.println("An error occurred and the job was not added. Try again.");
-        System.out.println();
     }
 
     /**
@@ -214,7 +236,7 @@ public class MenuManager
             String result = scanner.nextLine().trim();
             if (result.equals("!"))
             {
-                System.out.println("Exiting...\n");
+                System.out.println("Exiting...");
                 return null;
             }
 
@@ -266,11 +288,12 @@ public class MenuManager
             if (scanner.hasNextInt())
             {
                 daysAgo = scanner.nextInt();
+                scanner.nextLine();
                 if (daysAgo < 0)
                     System.out.println("Negative days ago??? Come on man, be normal.");
                 else
                 {
-                    date = LocalDate.now().minus(Duration.ofDays(daysAgo));
+                    date = LocalDate.now().minusDays(daysAgo);
                     System.out.println("Date: " + date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")));
                     System.out.print("Is this correct? ('y' for yes, anything else for no): ");
                     if (!scanner.nextLine().trim().equalsIgnoreCase("Y")) daysAgo = -1;
@@ -280,7 +303,7 @@ public class MenuManager
             {
                 if (scanner.nextLine().trim().equals("!"))
                 {
-                    System.out.println("Exiting...\n");
+                    System.out.println("Exiting...");
                     return null;
                 }
 
@@ -309,7 +332,7 @@ public class MenuManager
             String result = scanner.nextLine().trim();
             if (result.equals("!"))
             {
-                System.out.println("Exiting...\n");
+                System.out.println("Exiting...");
                 return null;
             }
 
@@ -336,11 +359,11 @@ public class MenuManager
     {
         if (name == null) throw new NullPointerException("Name cannot be null.");
 
-        System.out.print("Was the " + name + " today or a few days ago? ('y' for yes, '!' to exit, anything else no): ");
+        System.out.print("Was the " + name + " recent (you know the number of days since the " + name + ")? ('y' for yes, '!' to exit, anything else no): ");
         String choice = scanner.nextLine().trim();
         if (choice.equals("!"))
         {
-            System.out.println("Exiting...\n");
+            System.out.println("Exiting...");
             return null;
         }
 
@@ -365,13 +388,14 @@ public class MenuManager
             if (scanner.hasNextInt())
             {
                 num = scanner.nextInt();
+                scanner.nextLine();
                 if (num < 0) System.out.println("Number cannot be negative!");
             }
             else
             {
                 if (scanner.nextLine().trim().equals("!"))
                 {
-                    System.out.println("Exiting...\n");
+                    System.out.println("Exiting...");
                     return null;
                 }
 
@@ -435,7 +459,7 @@ public class MenuManager
             String name = scanner.nextLine().trim();
             if (name.equals("!"))
             {
-                System.out.println("Exiting...\n");
+                System.out.println("Exiting...");
                 return null;
             }
 
@@ -461,7 +485,7 @@ public class MenuManager
         List<Job> jobs = workTracker.getJobs();
         if (jobs.isEmpty())
         {
-            System.out.println("No jobs exist. Have you tried adding a job? Exiting...\n");
+            System.out.println("No jobs exist. Have you tried adding a job?");
             return;
         } 
 
@@ -478,10 +502,10 @@ public class MenuManager
         Duration duration = getDuration("shift");
         if (duration == null) return;
 
-        System.out.print("This shift is from " + start.format(Shift.DEFAULT_DATETIME_FORMAT) + " to " + start.plus(duration).format(Shift.DEFAULT_DATETIME_FORMAT) + ". Is this correct? ('y' for yes, anything else for no): ");
+        System.out.print("This shift is from " + start.format(Shift.DEFAULT_DATETIME_FORMAT) + " to " + start.plus(duration).format(Shift.DEFAULT_DATETIME_FORMAT) + " Is this correct? ('y' for yes, anything else for no): ");
         if (!scanner.nextLine().trim().equalsIgnoreCase("Y"))
         {
-            System.out.println("Exiting...\n");
+            System.out.println("Exiting...");
             return;
         }
 
@@ -492,14 +516,14 @@ public class MenuManager
             String name = scanner.nextLine().trim();
             if (name.equals("!"))
             {
-                System.out.println("Exiting...\n");
+                System.out.println("Exiting...");
                 return;
             }
 
             Shift shift = new Shift(name, matchingJob, start, duration);
             boolean success = this.workTracker.addShift(shift);
             if (success)
-                System.out.println("Shift: " + shift.getName() + "added successfully.");
+                System.out.println("Shift: " + shift.getName() + " added successfully.");
             else
                 System.out.println("An error occurred and the shift was not added successfully.");
         }
@@ -508,11 +532,10 @@ public class MenuManager
             Shift shift = new Shift(matchingJob, start, duration);
             boolean success = this.workTracker.addShift(shift);
             if (success)
-                System.out.println("Shift: " + shift.getName() + "added successfully.");
+                System.out.println("Shift: " + shift.getName() + " added successfully.");
             else
                 System.out.println("An error occurred and the shift was not added successfully.");
         }
-        System.out.println();
     }
 
     /**
@@ -523,7 +546,7 @@ public class MenuManager
         List<Job> jobs = workTracker.getJobs();
         if (jobs.isEmpty())
         {
-            System.out.println("No jobs exist. Have you tried adding a job? Exiting...\n");
+            System.out.println("No jobs exist. Have you tried adding a job?");
             return;
         }
 
@@ -537,15 +560,14 @@ public class MenuManager
     {
         if (this.currentShifts.isEmpty())
         {
-            System.out.println("There are currently no tracked shifts. Have you tried loading shifts or changing your filter? Exiting...\n");
+            System.out.println("There are currently no tracked shifts. Have you tried loading shifts or changing your filter?");
             return;
         }
 
         for (Shift shift : this.currentShifts)
         {
-            System.out.println(shift);
+            System.out.println(shift.display(DisplayMode.Times));
         }
-        System.out.println();
     }
 
     /**
@@ -558,7 +580,6 @@ public class MenuManager
         System.out.print("Cleared " + elementsCleared + " element");
         if (elementsCleared != 1) System.out.print("s");
         System.out.println(" from current shifts.");
-        System.out.println();
     }
 
     /**
@@ -568,7 +589,7 @@ public class MenuManager
     {
         if (this.workTracker.getJobs().isEmpty())
         {
-            System.out.println("There are no jobs to get shifts from. Exiting...\n");
+            System.out.println("There are no jobs to get shifts from.");
             return;
         }
 
@@ -584,7 +605,6 @@ public class MenuManager
         if (newElements == 1) System.out.print(" was");
         else System.out.print("s were");
         System.out.println(" added to current shifts.");
-        System.out.println();
     }
 
     /**
@@ -601,7 +621,6 @@ public class MenuManager
         if (newElements == 1) System.out.print(" was");
         else System.out.print("s were");
         System.out.println(" added to current shifts.");
-        System.out.println();
     }
 
 }

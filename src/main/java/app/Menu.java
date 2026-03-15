@@ -173,13 +173,14 @@ public class Menu
             if (scanner.hasNextInt())
             {
                 choice = scanner.nextInt();
+                scanner.nextLine();
                 if (choice < minChoice || choice > size)
-                    System.out.println("Invalid choice. Must be one of the options " + minChoice + "-" + size);
+                    System.out.println("Invalid choice. Must be one of the options " + minChoice + "-" + size + "\n");
             }
             else
             {
-                System.out.println("That is not a number.");
-                scanner.next();
+                System.out.println("That is not a number.\n");
+                scanner.nextLine();
             }
         }
         return choice;

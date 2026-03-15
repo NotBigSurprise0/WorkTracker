@@ -61,7 +61,7 @@ public class Shift
      */
     public Shift(Job job, LocalDateTime start, LocalDateTime end)
     {
-        this(Shift.DEFAULT_NAME, job, start, end);
+        this(Shift.DEFAULT_NAME + " (" + Shift.nextId + ")", job, start, end);
     }
 
     /**
@@ -104,7 +104,7 @@ public class Shift
      */
     public Shift(Job job, LocalDateTime start, Duration duration)
     {
-        this(Shift.DEFAULT_NAME, job, start, duration);
+        this(Shift.DEFAULT_NAME + " (" + Shift.nextId + ")", job, start, duration);
     }
 
     /**
