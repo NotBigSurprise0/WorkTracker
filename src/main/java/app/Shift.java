@@ -31,11 +31,12 @@ public class Shift
      * @param start The start time of the shift (cannot be {@code null}) (cannot be after {@code end})
      * @param end The end time of the shift (cannot be {@code null}) (cannot be before {@code start})
      * @throws NullPointerException If any argument is {@code null}
-     * @throws IllegalArgumentException If {@code start} is after {@code end}
+     * @throws IllegalArgumentException If {@code start} is after {@code end} or the hourly pay of {@code job} is negative
      */
     public Shift(String name, Job job, LocalDateTime start, LocalDateTime end)
     {
         if (name == null || job == null || start == null || end == null) throw new NullPointerException("Arguments cannot be null");
+        if (job.getCurrentHourlyPay() < 0) throw new IllegalArgumentException("The hourly pay for the job cannot be negative");
 
         Duration calculatedDuration = Duration.between(start, end);
         if (calculatedDuration.isNegative()) throw new IllegalArgumentException("End cannot be before start");
@@ -59,7 +60,7 @@ public class Shift
      * @param start The start time of the shift (cannot be {@code null}) (cannot be after {@code end})
      * @param end The end time of the shift (cannot be {@code null}) (cannot be before {@code start})
      * @throws NullPointerException If any argument is {@code null}
-     * @throws IllegalArgumentException If {@code start} is after {@code end}
+     * @throws IllegalArgumentException If {@code start} is after {@code end} or the hourly pay of {@code job} is negative
      */
     public Shift(Job job, LocalDateTime start, LocalDateTime end)
     {
@@ -74,11 +75,12 @@ public class Shift
      * @param start The start time of the shift (cannot be {@code null})
      * @param duration The duration of the shift (cannot be {@code null}) (cannot be negative)
      * @throws NullPointerException If any argument is {@code null}
-     * @throws IllegalArgumentException If {@code duration} is negative
+     * @throws IllegalArgumentException If {@code duration} is negative or the hourly pay of {@code job} is negative
      */
     public Shift(String name, Job job, LocalDateTime start, Duration duration)
     {
         if (name == null || job == null || start == null || duration == null) throw new NullPointerException("Arguments cannot be null");
+        if (job.getCurrentHourlyPay() < 0) throw new IllegalArgumentException("The hurly pay for the job cannot be negative");
         if (duration.isNegative()) throw new IllegalArgumentException("Duration cannot be negative");
 
         LocalDateTime calculatedEnd = start.plus(duration);
@@ -102,7 +104,7 @@ public class Shift
      * @param start The start time of the shift (cannot be {@code null}) (cannot be after {@code end})
      * @param duration The duration of the shift (cannot be {@code null}) (cannot be negative)
      * @throws NullPointerException If any argument is {@code null}
-     * @throws IllegalArgumentException If {@code duration} is negative
+     * @throws IllegalArgumentException If {@code duration} is negative or the hourly pay of {@code job} is negative
      */
     public Shift(Job job, LocalDateTime start, Duration duration)
     {
