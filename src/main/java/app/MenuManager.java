@@ -135,7 +135,7 @@ public class MenuManager
      * <p>
      * Displays error messages if the time could not be converted into hours, minutes, and seconds
      * 
-     * @param parts Each part of the time and can be length 2 or 3 if seconds are not included
+     * @param parts Each part of the time and can be length 2 or 3 if seconds are not included (should not be {@code null})
      * @param isPm Determines if the time is in the afternoon or not
      * @return A Integer list containing the hours (0-23), minutes (0-59), and seconds (0-59) of the time if the parts could be converted, otherwise {@code null}
      */
@@ -189,11 +189,14 @@ public class MenuManager
     /**
      * Gets a LocalTime from user input.
      * 
-     * @param name The name shown when prompting the user
+     * @param name The name shown when prompting the user (cannot be {@code null})
      * @return The {@code LocalTime} if the user didn't exit, otherwise {@code null} because the user exited
+     * @throws NullPointerException if {@code name} is {@code null}
      */
     private static LocalTime getTime(String name)
     {
+        if (name == null) throw new NullPointerException("Name cannot be null.");
+
         LocalTime time = null;
         while (time == null)
         {
@@ -317,6 +320,7 @@ public class MenuManager
      * 
      * @param name The name shown when prompting the user
      * @return The {@code LocalDate} if the user didn't exit, otherwise {@code null} because the user exited
+     * @throws NullPointerException if {@code name} is {@code null}
      */
     private static LocalDate getDate(String name)
     {
