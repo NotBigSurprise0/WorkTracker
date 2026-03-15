@@ -212,6 +212,7 @@ public class MenuManager
         switch (choice)
         {
             case 1 -> this.showTotalTimeWorkedMenu();
+            case 2 -> this.showExpectedPaymentMenu();
             default -> {}
         }
     }
@@ -802,4 +803,18 @@ public class MenuManager
         Duration totalDuration = Shift.getTotalDuration(this.currentShifts);
         System.out.println("Total time worked for " + size + " loaded shifts: " + Utility.formatDuration(totalDuration));
     }
+
+    private void showExpectedPaymentMenu()
+    {
+        if (this.currentShifts.isEmpty())
+        {
+            System.out.println("There are currently no loaded shifts. Have you tried loading shifts or changing your filter?");
+            return;
+        }
+
+        int size = this.currentShifts.size();
+        double expectedPay = Shift.getTotalPay(this.currentShifts);
+        System.out.println("Expected payment total across all " + size + " loaded shifts: " + Utility.formatPay(expectedPay));
+    }
+
 }
