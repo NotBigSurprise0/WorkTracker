@@ -274,15 +274,15 @@ public class MenuManager
             jobExists = workTracker.jobExists(job);
             if (jobExists) System.out.println("That job already exists!");
         }
-        double pay = -2;
-        while (pay < 0 && pay != -1)
+        double wage = -2;
+        while (wage < 0 && wage != -1)
         {
-            System.out.print("Enter the hourly pay for the job in dollars (enter -1 if unknown or '!' to exit): ");
+            System.out.print("Enter the hourly wage for the job in dollars (enter -1 if unknown or '!' to exit): ");
             if (scanner.hasNextDouble())
             {
-                pay = scanner.nextDouble();
+                wage = scanner.nextDouble();
                 scanner.nextLine();
-                if (pay < 0 && pay != -1)
+                if (wage < 0 && wage != -1)
                 {
                     System.out.println("Invalid amount! Can't be negative.");
                 }
@@ -298,7 +298,7 @@ public class MenuManager
                 System.out.println("That is not a number!");
             }
         }
-        if (pay != -1) job.updateHourlyPay(pay);
+        if (wage != -1) job.updateHourlyWage(wage);
 
         boolean success = workTracker.addJob(job);
         if (success)
@@ -659,9 +659,9 @@ public class MenuManager
         Job matchingJob = this.getValidJob("Enter the job this shift is for");
         if (matchingJob == null) return;
 
-        if (matchingJob.getCurrentHourlyPay() < 0)
+        if (matchingJob.getCurrentHourlyWage() < 0)
         {
-            System.out.println("This job (" + matchingJob.getName() + ") has an unknown hourly pay! Specify this before creating a shift.");
+            System.out.println("This job (" + matchingJob.getName() + ") has an unknown hourly wage! Specify this before creating a shift.");
             return;
         }
 

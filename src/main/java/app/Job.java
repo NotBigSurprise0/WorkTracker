@@ -5,10 +5,10 @@ import java.util.Objects;
 public class Job
 {
     private String name;
-    private double hourlyPay;
+    private double hourlyWage;
 
     /**
-     * Creates a job with the given name and an unspecified hourly pay.
+     * Creates a job with the given name and an unspecified hourly wage.
      * 
      * @param name The name of the job (cannot be null)
      * @throws IllegalArgumentException If the name is null
@@ -18,23 +18,23 @@ public class Job
         Objects.requireNonNull(name, "Cannot create a job with a null name");
 
         this.name = name.trim();
-        this.hourlyPay = -1;
+        this.hourlyWage = -1;
     }
 
     /**
-     * Creates a job with the given name and hourly pay.
+     * Creates a job with the given name and hourly wage.
      * 
      * @param name The name of the job (cannot be null)
-     * @param hourlyPay The hourly pay (cannot be negative)
-     * @throws IllegalArgumentException If the name is null or hourly pay is negative
+     * @param hourlyWage The hourly wage (cannot be negative)
+     * @throws IllegalArgumentException If the name is null or hourly wage is negative
      */
-    public Job(String name, double hourlyPay)
+    public Job(String name, double hourlyWage)
     {
         Objects.requireNonNull(name, "Cannot create a job with a null name");
-        if (hourlyPay < 0) throw new IllegalArgumentException("Cannot have an hourly pay that is negative.");
+        if (hourlyWage < 0) throw new IllegalArgumentException("Cannot have an hourly wage that is negative.");
 
         this.name = name.trim();
-        this.hourlyPay = hourlyPay;
+        this.hourlyWage = hourlyWage;
     }
 
     /**
@@ -48,13 +48,13 @@ public class Job
     }
 
     /**
-     * Gets the hourly pay for the job.
+     * Gets the hourly wage for the job.
      * 
-     * @return The hourly pay
+     * @return The hourly wage
      */
-    public double getCurrentHourlyPay()
+    public double getCurrentHourlyWage()
     {
-        return this.hourlyPay;
+        return this.hourlyWage;
     }
 
     /**
@@ -72,25 +72,25 @@ public class Job
     }
 
     /**
-     * Updates the hourly pay for the job to the new rate. If {@code newRate} is negative, hourly pay is not updated.
+     * Updates the hourly wage for the job to the new rate. If {@code newRate} is negative, hourly wage is not updated.
      * 
-     * @param newRate The new hourly pay for the job
-     * @return {@code true} if the hourly pay was updated successfully ({@code newRate} was not negative), otherwise {@code false}
+     * @param newRate The new hourly wage for the job
+     * @return {@code true} if the hourly wage was updated successfully ({@code newRate} was not negative), otherwise {@code false}
      */
-    public boolean updateHourlyPay(double newRate)
+    public boolean updateHourlyWage(double newRate)
     {
         if (newRate < 0) return false;
 
-        this.hourlyPay = newRate;
+        this.hourlyWage = newRate;
         return true;
     }
 
     @Override
     public String toString()
     {
-        if (this.hourlyPay == -1) return this.name + ": Unknown pay";
+        if (this.hourlyWage == -1) return this.name + ": Unknown wage";
 
-        return this.name + ": " + Utility.formatPay(this.hourlyPay);
+        return this.name + ": " + Utility.formatPay(this.hourlyWage);
     }
 
     @Override
