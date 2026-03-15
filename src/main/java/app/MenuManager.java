@@ -19,6 +19,11 @@ import app.enums.DisplayMode;
 public class MenuManager
 {
     private static final Menu MAIN_MENU = new Menu("---Main Menu---");
+    private static final Menu ADD_DATA_MENU = new Menu("--Add Data--");
+    private static final Menu CHANGE_DATA_MENU = new Menu("--Change Data--");
+    private static final Menu REMOVE_DATA_MENU = new Menu("--Remove Data--");
+    private static final Menu DISPLAY_DATA_MENU = new Menu("--Display Data--");
+    private static final Menu SHIFT_DATA_MENU = new Menu("--Shift Data--");
     private static final Scanner scanner = new Scanner(System.in);
 
     private final HashSet<Shift> currentShifts;
@@ -26,13 +31,40 @@ public class MenuManager
 
     static 
     {
-        MAIN_MENU.addOption("Add a job");
-        MAIN_MENU.addOption("Add a shift");
-        MAIN_MENU.addOption("Show all jobs");
-        MAIN_MENU.addOption("Show current shifts");
-        MAIN_MENU.addOption("Clear current shifts");
-        MAIN_MENU.addOption("Load shifts for a job");
-        MAIN_MENU.addOption("Load all shifts");
+        MAIN_MENU.addOption("Add data");
+        MAIN_MENU.addOption("Change data");
+        MAIN_MENU.addOption("Remove data");
+        MAIN_MENU.addOption("Display data");
+        MAIN_MENU.addOption("Manage shift data");
+    }
+
+    static
+    {
+        ADD_DATA_MENU.addOption("Add a job");
+        ADD_DATA_MENU.addOption("Add a shift");
+    }
+
+    static
+    {
+
+    }
+
+    static 
+    {
+
+    }
+
+    static
+    {
+        DISPLAY_DATA_MENU.addOption("Show all jobs");
+    }
+
+    static
+    {
+        SHIFT_DATA_MENU.addOption("Load shifts for a job");
+        SHIFT_DATA_MENU.addOption("Load all shifts");
+        SHIFT_DATA_MENU.addOption("Clear loaded shifts");
+        SHIFT_DATA_MENU.addOption("Show loaded shifts");
     }
 
     /**
@@ -48,12 +80,16 @@ public class MenuManager
     }
 
     /**
-     * Waits for the user to press enter before continuing.
+     * Waits for the user to press enter before continuing if {@code num} is not 0.
      */
-    public static void pause()
+    public static void pause(int num)
     {
+        System.out.println();
+        if (num == 0) return;
+
         System.out.print("Press enter to continue...");
         scanner.nextLine();
+        System.out.println();
     }
 
     /**
@@ -65,24 +101,92 @@ public class MenuManager
         while (choice != 0)
         {
             choice = MAIN_MENU.display();
+            System.out.println();
             switch (choice)
             {
-                case 1 -> this.addJobMenu();
-                case 2 -> this.addShiftMenu();
-                case 3 -> this.showAllJobsMenu();
-                case 4 -> this.showCurrentShiftsMenu();
-                case 5 -> this.clearCurrentShiftsMenu();
-                case 6 -> this.loadShiftsForJobMenu();
-                case 7 -> this.loadAllShiftsMenu();
+                case 1 -> this.addDataMenu();
+                case 2 -> this.changeDataMenu();
+                case 3 -> this.removeDataMenu();
+                case 4 -> this.displayDataMenu();
+                case 5 -> this.shiftDataMenu();
                 default -> {}
             }
-            if (choice != 0)
-            {
-                System.out.println();
-                pause();
-                System.out.println();
-            }
+        }
+    }
 
+    /**
+     * Handles the add data menu. Does not repeat.
+     */
+    public void addDataMenu()
+    {
+        int choice = ADD_DATA_MENU.display();
+        switch (choice)
+        {
+            case 1 -> this.addJobMenu();
+            case 2 -> this.addShiftMenu();
+            default -> {}
+        }
+        pause(choice);
+    }
+
+    /**
+     * Handles the change data menu. Does not repeat.
+     */
+    public void changeDataMenu()
+    {
+        int choice = CHANGE_DATA_MENU.display();
+        switch (choice)
+        {
+            default -> {}
+        }
+        pause(choice);
+    }
+
+    /**
+     * Handles the remove data menu. Does not repeat.
+     */
+    public void removeDataMenu()
+    {
+        int choice = REMOVE_DATA_MENU.display();
+        switch (choice)
+        {
+            default -> {}
+        }
+        pause(choice);
+    }
+
+    /**
+     * Handles the display data menu. Does not repeat.
+     */
+    public void displayDataMenu()
+    {
+        int choice = DISPLAY_DATA_MENU.display();
+        switch (choice)
+        {
+            case 1 -> this.showAllJobsMenu();
+            default -> {}
+        }
+        pause(choice);
+    }
+
+    /**
+     * Handles the shift data menu and repeats until exiting.
+     */
+    public void shiftDataMenu()
+    {
+        int choice = -1;
+        while (choice != 0)
+        {
+            choice = SHIFT_DATA_MENU.display();
+            switch (choice)
+            {
+                case 1 -> this.loadShiftsForJobMenu();
+                case 2 -> this.loadAllShiftsMenu();
+                case 3 -> this.clearCurrentShiftsMenu();
+                case 4 -> this.showCurrentShiftsMenu();
+                default -> {}
+            }
+            pause(choice);
         }
     }
 

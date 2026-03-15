@@ -148,6 +148,7 @@ public class Menu
      * Displays the menu and gets the choice option from the user. 0 is always permitted for exiting.
      * 
      * @return The choice number
+     * @throws IllegalStateException If {@code hasOption0} is {@code false} and there are no options
      */
     public int display()
     {
@@ -156,6 +157,8 @@ public class Menu
         int minChoice;
         if (this.hasOption0) minChoice = 0;
         else minChoice = 1;
+
+        if (minChoice > size) throw new IllegalStateException("Cannot select an option when no options available.");
 
         int choice = -1;
         while (choice < minChoice || choice > size)
