@@ -506,6 +506,9 @@ public class MenuManager
             try
             {
                 date = LocalDate.parse(result, DateTimeFormatter.ISO_LOCAL_DATE);
+                System.out.println("Date: " + date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")));
+                System.out.print("Is this correct? ('y' for yes, anything else for no): ");
+                if (!scanner.nextLine().trim().equalsIgnoreCase("Y")) date = null;
             }
             catch (DateTimeParseException d)
             {
