@@ -59,6 +59,7 @@ public class MenuManager
                 case 3 -> this.showAllJobsMenu();
                 case 4 -> this.showCurrentShiftsMenu();
                 case 5 -> this.clearCurrentShiftsMenu();
+                case 6 -> this.loadShiftsForJobMenu();
                 default -> {}
             }
         }
@@ -428,7 +429,7 @@ public class MenuManager
         boolean jobExists = false;
         while (matchingJob == null || !jobExists)
         {
-            System.out.println(message);
+            System.out.println(message + " ('!' to exit)");
             System.out.println("Valid jobs: " + jobs.toString());
             String name = scanner.nextLine().trim();
             if (name.equals("!"))
@@ -463,7 +464,8 @@ public class MenuManager
             return;
         } 
 
-        Job matchingJob = this.getValidJob("Enter the job this shift is for ('!' to exit)");
+        Job matchingJob = this.getValidJob("Enter the job this shift is for");
+        if (matchingJob == null) return;
 
         LocalDate startDate = getDate("start date");
         if (startDate == null) return;
@@ -555,6 +557,29 @@ public class MenuManager
         System.out.print("Cleared " + elementsCleared + " element");
         if (elementsCleared != 1) System.out.println("s");
         else System.out.println();
+        System.out.println();
+    }
+
+    private void loadShiftsForJobMenu()
+    {
+        if (this.workTracker.getJobs().isEmpty())
+        {
+            System.out.println("There are no jobs to get shifts from. Exiting...\n");
+            return;
+        }
+
+        Job validJob = this.getValidJob("Enter the job to get shifts from");
+        if (validJob == null) return;
+
+        int currentSize = this.currentShifts.size();
+        List<Shift> shifts = this.workTracker.getShifts(validJob);
+        this.currentShifts.addAll(shifts);
+        int newSize = this.currentShifts.size();
+        int newElements = newSize - currentSize;
+        System.out.print(newElements + " new element");
+        if (newElements == 1) System.out.print(" was");
+        else System.out.print("s were");
+        System.out.println(" added to current shifts.");
         System.out.println();
     }
 }
