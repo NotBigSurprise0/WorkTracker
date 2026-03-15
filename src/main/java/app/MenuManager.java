@@ -17,7 +17,7 @@ public class MenuManager
     private static final Menu MAIN_MENU = new Menu("---Main Menu---");
     private static final Scanner scanner = new Scanner(System.in);
 
-    private HashSet<Shift> currentShifts;
+    private final HashSet<Shift> currentShifts;
     private final WorkTracker workTracker;
 
     static 
