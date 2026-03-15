@@ -18,6 +18,9 @@ public class MenuManager
     {
         MAIN_MENU.addOption("Add a job");
         MAIN_MENU.addOption("Add a shift");
+        MAIN_MENU.addOption("Show all jobs");
+        MAIN_MENU.addOption("Show all shifts for a job");
+        MAIN_MENU.addOption("Show all shifts");
     }
 
     public MenuManager(File file) throws IOException
@@ -43,7 +46,53 @@ public class MenuManager
 
     public void addJobMenu()
     {
-        System.out.println("Enter the name of the job: ");
+        Job job = null;
+        boolean jobExists = true;
+        while (job == null || jobExists)
+        {
+            System.out.print("Enter the name of the job (enter '!' to exit): ");
+            String name = scanner.nextLine().trim();
+            if (name.equals("!"))
+            {
+                System.out.println("Exiting...\n");
+                return;
+            }
+            
+            job = new Job(name);
+            jobExists = workTracker.jobExists(job);
+            if (jobExists) System.out.println("That job already exists!");
+        }
+        double pay = -2;
+        while (pay < 0 && pay != -1)
+        {
+            System.out.print("Enter the hourly pay for the job in dollars (enter -1 if unknown and '!' to exit)");
+            if (scanner.hasNextInt())
+            {
+                pay = scanner.nextInt();
+                if (pay < 0 && pay != -1)
+                {
+                    System.out.println("Invalid amount! Can't be negative.");
+                }
+            }
+            else
+            {
+                if (scanner.nextLine().trim().equals("!"))
+                {
+                    System.out.println("Exiting...\n");
+                    return;
+                }
+                
+                System.out.println("That is not a number!");
+                scanner.next();
+            }
+        }
+        if (pay != -1) job.updateHourlyPay(pay);
+
+        boolean success = workTracker.addJob(job);
+        if (success)
+            System.out.println("Successfully added job " + job.getName() + ".");
+        else
+            System.out.println("An error occurred and the job was not added. Try again.");
     }
 
     public void addShiftMenu()
