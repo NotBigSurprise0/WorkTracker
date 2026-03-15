@@ -56,6 +56,7 @@ public class MenuManager
                 case 1 -> this.addJobMenu();
                 case 2 -> this.addShiftMenu();
                 case 3 -> this.showAllJobsMenu();
+                case 4 -> this.showCurrentShiftsMenu();
                 default -> {}
             }
         }
@@ -509,6 +510,9 @@ public class MenuManager
         System.out.println();
     }
 
+    /**
+     * Shows all the tracked jobs.
+     */
     private void showAllJobsMenu()
     {
         List<Job> jobs = workTracker.getJobs();
@@ -519,5 +523,23 @@ public class MenuManager
         }
 
         System.out.println("Available jobs: " + jobs);
+    }
+
+    /**
+     * Shows the currently tracked shifts.
+     */
+    private void showCurrentShiftsMenu()
+    {
+        if (this.currentShifts.isEmpty())
+        {
+            System.out.println("There are currently no tracked shifts. Have you tried loading shifts or changing your filter? Exiting...\n");
+            return;
+        }
+
+        for (Shift shift : this.currentShifts)
+        {
+            System.out.println(shift);
+        }
+        System.out.println();
     }
 }
