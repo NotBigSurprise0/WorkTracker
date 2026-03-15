@@ -25,8 +25,9 @@ public class MenuManager
         MAIN_MENU.addOption("Add a job");
         MAIN_MENU.addOption("Add a shift");
         MAIN_MENU.addOption("Show all jobs");
-        MAIN_MENU.addOption("Show all shifts for a job");
-        MAIN_MENU.addOption("Show all shifts");
+        MAIN_MENU.addOption("Show current shifts");
+        MAIN_MENU.addOption("Load shifts for a job");
+        MAIN_MENU.addOption("Load all shifts");
     }
 
     /**
@@ -54,11 +55,15 @@ public class MenuManager
             {
                 case 1 -> this.addJobMenu();
                 case 2 -> this.addShiftMenu();
+                case 3 -> this.showAllJobsMenu();
                 default -> {}
             }
         }
     }
 
+    /**
+     * Adds a job.
+     */
     private void addJobMenu()
     {
         Job job = null;
@@ -443,6 +448,9 @@ public class MenuManager
         return matchingJob;
     }
 
+    /**
+     * Adds a shift for a job based on user input.
+     */
     private void addShiftMenu()
     {
         List<Job> jobs = workTracker.getJobs();
@@ -499,5 +507,17 @@ public class MenuManager
                 System.out.println("An error occurred and the shift was not added successfully.");
         }
         System.out.println();
+    }
+
+    private void showAllJobsMenu()
+    {
+        List<Job> jobs = workTracker.getJobs();
+        if (jobs.isEmpty())
+        {
+            System.out.println("No jobs exist. Have you tried adding a job? Exiting...\n");
+            return;
+        }
+
+        System.out.println("Available jobs: " + jobs);
     }
 }
