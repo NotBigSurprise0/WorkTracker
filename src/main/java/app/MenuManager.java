@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,7 +17,7 @@ public class MenuManager
     private static final Menu MAIN_MENU = new Menu("---Main Menu---");
     private static final Scanner scanner = new Scanner(System.in);
 
-    private List<Shift> currentShifts;
+    private HashSet<Shift> currentShifts;
     private final WorkTracker workTracker;
 
     static 
@@ -26,6 +26,7 @@ public class MenuManager
         MAIN_MENU.addOption("Add a shift");
         MAIN_MENU.addOption("Show all jobs");
         MAIN_MENU.addOption("Show current shifts");
+        MAIN_MENU.addOption("Clear current shifts");
         MAIN_MENU.addOption("Load shifts for a job");
         MAIN_MENU.addOption("Load all shifts");
     }
@@ -38,7 +39,7 @@ public class MenuManager
      */
     public MenuManager(File file) throws IOException
     {
-        this.currentShifts = new ArrayList<>();
+        this.currentShifts = new HashSet<>();
         this.workTracker = new WorkTracker(file);
     }
 
@@ -57,6 +58,7 @@ public class MenuManager
                 case 2 -> this.addShiftMenu();
                 case 3 -> this.showAllJobsMenu();
                 case 4 -> this.showCurrentShiftsMenu();
+                case 5 -> this.clearCurrentShiftsMenu();
                 default -> {}
             }
         }
@@ -540,6 +542,19 @@ public class MenuManager
         {
             System.out.println(shift);
         }
+        System.out.println();
+    }
+
+    /**
+     * Clears the currently tracked shifts.
+     */
+    private void clearCurrentShiftsMenu()
+    {
+        int elementsCleared = this.currentShifts.size();
+        this.currentShifts.clear();
+        System.out.print("Cleared " + elementsCleared + " element");
+        if (elementsCleared != 1) System.out.println("s");
+        else System.out.println();
         System.out.println();
     }
 }
