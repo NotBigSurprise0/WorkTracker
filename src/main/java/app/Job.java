@@ -15,7 +15,7 @@ public class Job
     {
         if (name == null) throw new NullPointerException("Cannot create a job with a null name.");
 
-        this.name = name;
+        this.name = name.trim();
         this.hourlyPay = -1;
     }
 
@@ -31,7 +31,7 @@ public class Job
         if (name == null) throw new NullPointerException("Cannot create a job with a null name.");
         if (hourlyPay < 0) throw new IllegalArgumentException("Cannot have an hourly pay that is negative.");
 
-        this.name = name;
+        this.name = name.trim();
         this.hourlyPay = hourlyPay;
     }
 
@@ -65,7 +65,7 @@ public class Job
     {
         if (newName == null) return false;
 
-        this.name = newName;
+        this.name = newName.trim();
         return true;
     }
 

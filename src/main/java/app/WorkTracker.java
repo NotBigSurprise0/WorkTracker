@@ -4,13 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
 public class WorkTracker
 {
-    private HashSet<Job> jobs;
+    /**
+     * Binds jobs with names in lowercase to the job with the name in the first given case like "abc" binds to "ABc" if the user first enter "ABc" as the job name.
+     */
+    private HashMap<Job, Job> jobLookUp;
     private HashMap<Job, ArrayList<Shift>> shifts;
     private File destinationFile;
 
@@ -28,15 +30,15 @@ public class WorkTracker
         this.destinationFile = file;
         if (!file.exists())
         {
-            this.jobs = new HashSet<>();
+            this.jobLookUp = new HashMap<>();
             this.shifts = new HashMap<>();
             return;
         }
-        
+
         try (Scanner scanner = new Scanner(file))
         {
             //! COMPLETE
-            this.jobs = new HashSet<>();
+            this.jobLookUp = new HashMap<>();
             this.shifts = new HashMap<>();
         }
         catch (IOException e)
@@ -44,6 +46,20 @@ public class WorkTracker
             System.out.println("An unexpected file error occurred.");
             System.out.println(e);
         }
+    }
+
+    /**
+     * Gets the matching recorded job with the name in whatever case the user provided if that exists.
+     * 
+     * @param job The job to look for a matching job (cannot be {@code null})
+     * @return The matching {@code Job} if one exists, otherwise {@code null}
+     */
+    public Job getMatchingJob(Job job)
+    {
+        if (job == null) throw new NullPointerException("Job cannot be null.");
+
+        Job jobWithLowercaseName = new Job(job.getName().toLowerCase());
+        return this.jobLookUp.get(jobWithLowercaseName);
     }
 
     /**
@@ -55,9 +71,7 @@ public class WorkTracker
      */
     public boolean jobExists(Job job)
     {
-        if (job == null) throw new NullPointerException("Job cannot be null.");
-
-        return this.jobs.contains(job);
+        return this.getMatchingJob(job) != null;
     }
 
     /**
@@ -73,7 +87,7 @@ public class WorkTracker
 
         if (this.jobExists(job)) return false;
 
-        this.jobs.add(job);
+        this.jobLookUp.put(new Job(job.getName().toLowerCase()), job);
         this.shifts.put(job, new ArrayList<>());
         return true;
     }
@@ -90,21 +104,22 @@ public class WorkTracker
         if (shift == null) throw new NullPointerException("Shift cannot be null.");
 
         Job job = shift.getJob();
-        if (!this.jobExists(job)) return false;
+        Job matchingJob = this.getMatchingJob(job);
+        if (matchingJob == null) return false;
 
-        ArrayList<Shift> jobShifts = this.shifts.get(job);
+        ArrayList<Shift> jobShifts = this.shifts.get(matchingJob);
         jobShifts.add(shift);
         return true;
     }
 
     /**
-     * Gets the set of jobs.
+     * Gets the list of jobs.
      * 
-     * @return The set of jobs
+     * @return The list of jobs
      */
-    public HashSet<Job> getJobs()
+    public List<Job> getJobs()
     {
-        return this.jobs;
+        return new ArrayList<>(jobLookUp.values());
     }
 
     /**
@@ -118,7 +133,10 @@ public class WorkTracker
     {
         if (job == null) throw new NullPointerException("Job cannot be null.");
 
-        List<Shift> jobShifts = this.shifts.get(job);
+        Job matchingJob = this.getMatchingJob(job);
+        if (matchingJob == null) return null;
+
+        List<Shift> jobShifts = this.shifts.get(matchingJob);
         return jobShifts;
     }
 
@@ -130,7 +148,7 @@ public class WorkTracker
     public List<Shift> getAllShifts()
     {
         List<Shift> allShifts = new ArrayList<>();
-        for (Job job : this.jobs)
+        for (Job job : this.jobLookUp.values())
         {
             List<Shift> jobShifts = this.getShifts(job);
             allShifts.addAll(jobShifts);
