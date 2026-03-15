@@ -149,6 +149,27 @@ public class Shift
     }
 
     /**
+     * Gets the total payment from the given collection of {@code Shift}s
+     * 
+     * @param shifts The Collection of Shifts to get the total payment (cannot be {@code null})
+     * @return A {@code double} representing the total amount of money received in dollars for the shifts
+     * @throws NullPointerException If {@code shifts} is {@code null}
+     */
+    public static double getTotalPay(Collection<Shift> shifts)
+    {
+        Objects.requireNonNull(shifts, "Shifts cannot be null");
+
+        double total = 0;
+        for (Shift shift : shifts)
+        {
+            double durationInHours = (double)shift.duration.toSeconds() / 3600;
+            double pay = shift.hourlyPay * durationInHours;
+            total += pay;
+        }
+        return total;
+    }
+
+    /**
      * Displays all the fields for the {@code Shift}.
      * 
      * @return The string containing the fields of the {@code Shift} in a readable format
