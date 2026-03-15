@@ -738,6 +738,9 @@ public class MenuManager
             return;
         }
 
+        int size = this.currentShifts.size();
+        if (size == 1) System.out.println("Here is the only shift:");
+        else System.out.println("Here are the " + size + " shifts:");
         for (Shift shift : this.getSortedShifts())
         {
             System.out.println(shift.display(DisplayMode.Times));
@@ -788,6 +791,12 @@ public class MenuManager
     {
         int currentSize = this.currentShifts.size();
         List<Shift> allShifts = this.workTracker.getAllShifts();
+        if (allShifts.isEmpty())
+        {
+            System.out.println("You have not crated any shifts. Have you tried adding a shift?");
+            return;
+        }
+
         this.currentShifts.addAll(allShifts);
         int newSize = this.currentShifts.size();
         int newElements = newSize - currentSize;
@@ -797,6 +806,9 @@ public class MenuManager
         System.out.println(" added to current shifts.");
     }
 
+    /**
+     * Shows the total time worked for the currently tracked shifts.
+     */
     private void showTotalTimeWorkedMenu()
     {
         if (this.currentShifts.isEmpty())
@@ -810,6 +822,9 @@ public class MenuManager
         System.out.println("Total time worked for " + size + " loaded shifts: " + Utility.formatDuration(totalDuration));
     }
 
+    /**
+     * Shows the total expected pay from all the currently traked shifts.
+     */
     private void showExpectedPaymentMenu()
     {
         if (this.currentShifts.isEmpty())
