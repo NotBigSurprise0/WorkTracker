@@ -556,8 +556,8 @@ public class MenuManager
         int elementsCleared = this.currentShifts.size();
         this.currentShifts.clear();
         System.out.print("Cleared " + elementsCleared + " element");
-        if (elementsCleared != 1) System.out.println("s");
-        else System.out.println();
+        if (elementsCleared != 1) System.out.print("s");
+        System.out.println(" from current shifts.");
         System.out.println();
     }
 
