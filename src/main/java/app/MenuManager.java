@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 import app.enums.DisplayMode;
@@ -80,9 +81,12 @@ public class MenuManager
      * 
      * @param file The file to manage
      * @throws IOException If an error occurrs with the file
+     * @throws NullPointerException If {@code file} is {@code null}
      */
     public MenuManager(File file) throws IOException
     {
+        Objects.requireNonNull(file, "File cannot be null");
+
         this.currentShifts = new HashSet<>();
         this.workTracker = new WorkTracker(file);
     }
@@ -226,11 +230,14 @@ public class MenuManager
     /**
      * Gets a list of the names of each job in the list of jobs.
      * 
-     * @param jobs The {@code List} of jobs
+     * @param jobs The {@code List} of jobs (cannot be {@code null})
      * @return A {@Code List} of {@code String}s with the names of each {@Code Job}
+     * @throws NullPointerException If {@code jobs} is {@code null}
      */
     private static List<String> getJobNames(List<Job> jobs)
     {
+        Objects.requireNonNull(jobs, "Jobs cannot be null");
+
         List<String> jobNames = new ArrayList<>();
         for (Job job : jobs)
         {
@@ -301,11 +308,14 @@ public class MenuManager
     /**
      * Determines if a string represents an integer value and is not negative.
      * 
-     * @param str The String to check
+     * @param str The String to check (cannot be {@code null})
      * @return {@code true} if {@code str} can be converted to an integer and is not negative, otherwise {@code false}
+     * @throws NullPointerException If {@code str} is {@code null}
      */
     private static boolean isNonNegativeInteger(String str)
     {
+        Objects.requireNonNull(str, "str cannot be null");
+
         try
         {
             int num = Integer.parseInt(str);
@@ -382,7 +392,7 @@ public class MenuManager
      */
     private static LocalTime getTime(String name)
     {
-        if (name == null) throw new NullPointerException("Name cannot be null.");
+        Objects.requireNonNull(name, "Name cannot be null");
 
         LocalTime time = null;
         while (time == null)
@@ -433,7 +443,7 @@ public class MenuManager
      */
     private static LocalDate getDateFromDaysAgo(String name)
     {
-        if (name == null) throw new NullPointerException("Name cannot be null.");
+        Objects.requireNonNull(name, "Name cannot be null");
 
         LocalDate date = null;
         int daysAgo = -1;
@@ -478,7 +488,7 @@ public class MenuManager
      */
     private static LocalDate getDateFromDateString(String name)
     {
-        if (name == null) throw new NullPointerException("Name cannot be null.");
+        Objects.requireNonNull(name, "Name cannot be null");
 
         LocalDate date = null;
         while (date == null)
@@ -512,7 +522,7 @@ public class MenuManager
      */
     private static LocalDate getDate(String name)
     {
-        if (name == null) throw new NullPointerException("Name cannot be null.");
+        Objects.requireNonNull(name, "Name cannot be null");
 
         System.out.print("Was the " + name + " recent (you know the number of days since the " + name + ")? ('y' for yes, '!' to exit, anything else no): ");
         String choice = scanner.nextLine().trim();
@@ -531,7 +541,7 @@ public class MenuManager
     /**
      * Gets a non negative integer from the user and reprompts until the number is valid, or the user types '!'.
      * 
-     * @param message The message to display to the user when prompting for the number
+     * @param message The message to display to the user when prompting for the number (must not be {@code null})
      * @return The non negative integer from the user if the user didn't exit, otherwise {@code null} because the user exited
      */
     private static Integer getNonNegativeInteger(String message)
@@ -569,7 +579,7 @@ public class MenuManager
      */
     private static Duration getDuration(String name)
     {
-        if (name == null) throw new NullPointerException("Name cannot be null.");
+        Objects.requireNonNull(name, "Name cannot be null");
 
         Duration duration = null;
         while (duration == null)
@@ -598,7 +608,7 @@ public class MenuManager
     /**
      * Gets the valid Job object that exists in the tracked jobs from user input.
      * 
-     * @param message The message displayed the the user when prompting
+     * @param message The message displayed the the user when prompting (must not be {@code null})
      * @return The {@code Job} if the user didn't exit, otherwise {@code null} because the user exited
      */
     private Job getValidJob(String message)
@@ -787,6 +797,6 @@ public class MenuManager
             return;
         }
 
-        
+
     }
 }

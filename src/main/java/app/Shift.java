@@ -16,11 +16,11 @@ public class Shift
     private static int nextId = 1;
 
     private String name;
-    private int id;
-    private Job job;
-    private LocalDateTime start;
-    private LocalDateTime end;
-    private Duration duration;
+    private final int id;
+    private final Job job;
+    private final LocalDateTime start;
+    private final LocalDateTime end;
+    private final Duration duration;
     private double hourlyPay;
 
     /**
@@ -35,10 +35,10 @@ public class Shift
      */
     public Shift(String name, Job job, LocalDateTime start, LocalDateTime end)
     {
-        if (name == null || job == null || start == null || end == null) throw new NullPointerException("Arguments cannot be null.");
+        if (name == null || job == null || start == null || end == null) throw new NullPointerException("Arguments cannot be null");
 
         Duration calculatedDuration = Duration.between(start, end);
-        if (calculatedDuration.isNegative()) throw new IllegalArgumentException("End cannot be before start.");
+        if (calculatedDuration.isNegative()) throw new IllegalArgumentException("End cannot be before start");
 
         this.name = name;
         this.id = Shift.nextId;
@@ -78,8 +78,8 @@ public class Shift
      */
     public Shift(String name, Job job, LocalDateTime start, Duration duration)
     {
-        if (name == null || job == null || start == null || duration == null) throw new NullPointerException("Arguments cannot be null.");
-        if (duration.isNegative()) throw new IllegalArgumentException("Duration cannot be negative.");
+        if (name == null || job == null || start == null || duration == null) throw new NullPointerException("Arguments cannot be null");
+        if (duration.isNegative()) throw new IllegalArgumentException("Duration cannot be negative");
 
         LocalDateTime calculatedEnd = start.plus(duration);
 
@@ -132,13 +132,13 @@ public class Shift
     /**
      * Gets the total duration of a collection of {@code Shift}s.
      * 
-     * @param shifts The Collection of Shifts to get the total duration
+     * @param shifts The Collection of Shifts to get the total duration (cannot be {@code null})
      * @return A {@code Duration} with the duration of the total duration of all the shifts
      * @throws NullPointerException If {@code shifts} is {@code null}
      */
     public static Duration getTotalDuration(Collection<Shift> shifts)
     {
-        Objects.requireNonNull(shifts);
+        Objects.requireNonNull(shifts, "Shifts cannot be null");
 
         Duration totalDuration = Duration.ZERO;
         for (Shift shift : shifts)
@@ -237,7 +237,7 @@ public class Shift
      */
     public String display(DisplayMode displayMode)
     {
-        if (displayMode == null) throw new NullPointerException("DisplayMode cannot be null.");
+        Objects.requireNonNull(displayMode, "DisplayMode cannot be null");
 
         return switch (displayMode)
         {

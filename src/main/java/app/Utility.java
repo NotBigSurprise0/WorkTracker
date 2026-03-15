@@ -1,6 +1,7 @@
 package app;
 
 import java.time.Duration;
+import java.util.Objects;
 
 public class Utility 
 {
@@ -54,7 +55,7 @@ public class Utility
      */
     public static String formatDuration(Duration duration)
     {
-        if (duration == null) throw new NullPointerException("Duration cannot be null.");
+        Objects.requireNonNull(duration, "Duration cannot be null");
 
         long hours = duration.toHours();
         long minutes = duration.toMinutesPart();

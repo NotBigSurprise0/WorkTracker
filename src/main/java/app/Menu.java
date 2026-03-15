@@ -2,6 +2,7 @@ package app;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Menu
@@ -9,8 +10,8 @@ public class Menu
     private static final Scanner scanner = new Scanner(System.in);
 
     private String header;
-    private List<String> options;
-    private boolean hasOption0;
+    private final List<String> options;
+    private final boolean hasOption0;
 
     /**
      * Creates a menu with no options or header with a default option 0.
@@ -42,7 +43,7 @@ public class Menu
      */
     public Menu(String header)
     {
-        if (header == null) throw new NullPointerException("Header cannot be null.");
+        Objects.requireNonNull(header, "Header cannot be null");
 
         this.header = header;
         this.options = new ArrayList<>();
@@ -58,7 +59,7 @@ public class Menu
      */
     public Menu(String header, boolean hasOption0)
     {
-        if (header == null) throw new NullPointerException("Header cannot be null.");
+        Objects.requireNonNull(header, "Header cannot be null");
 
         this.header = header;
         this.options = new ArrayList<>();
@@ -73,7 +74,7 @@ public class Menu
      */
     public Menu(List<String> options)
     {
-        if (options == null) throw new NullPointerException("Options cannot be null.");
+        Objects.requireNonNull(options, "Options cannot be null");
 
         this.header = "";
         this.options = new ArrayList<>(options);
@@ -89,10 +90,9 @@ public class Menu
      */
     public Menu(List<String> options, boolean hasOption0)
     {
-        if (options == null) throw new NullPointerException("Options cannot be null.");
+        Objects.requireNonNull(options, "Options cannot be null");
 
-        this.header = "";
-        this.options = new ArrayList<>(options);
+        this.options = options;
         this.hasOption0 = hasOption0;
     }
 
@@ -105,8 +105,8 @@ public class Menu
      */
     public Menu(String header, List<String> options)
     {
-        if (header == null) throw new NullPointerException("Header cannot be null.");
-        if (options == null) throw new NullPointerException("Options cannot be null.");
+        Objects.requireNonNull(header, "Header cannot be null");
+        Objects.requireNonNull(options, "Options cannot be null");
 
         this.header = header;
         this.options = new ArrayList<>(options);
@@ -123,11 +123,11 @@ public class Menu
      */
     public Menu(String header, List<String> options, boolean hasOption0)
     {
-        if (header == null) throw new NullPointerException("Header cannot be null.");
-        if (options == null) throw new NullPointerException("Options cannot be null.");
+        Objects.requireNonNull(header, "Header cannot be null");
+        Objects.requireNonNull(options, "Options cannot be null");
 
         this.header = header;
-        this.options = new ArrayList<>(options);
+        this.options = options;
         this.hasOption0 = hasOption0;
     }
 
@@ -139,7 +139,7 @@ public class Menu
      */
     public void addOption(String option)
     {
-        if (option == null) throw new NullPointerException("Option cannot be null.");
+        Objects.requireNonNull(option, "Option cannot be null");
 
         options.add(option);
     }

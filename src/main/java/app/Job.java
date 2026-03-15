@@ -1,5 +1,7 @@
 package app;
 
+import java.util.Objects;
+
 public class Job
 {
     private String name;
@@ -13,7 +15,7 @@ public class Job
      */
     public Job(String name)
     {
-        if (name == null) throw new NullPointerException("Cannot create a job with a null name.");
+        Objects.requireNonNull(name, "Cannot create a job with a null name");
 
         this.name = name.trim();
         this.hourlyPay = -1;
@@ -28,7 +30,7 @@ public class Job
      */
     public Job(String name, double hourlyPay)
     {
-        if (name == null) throw new NullPointerException("Cannot create a job with a null name.");
+        Objects.requireNonNull(name, "Cannot create a job with a null name");
         if (hourlyPay < 0) throw new IllegalArgumentException("Cannot have an hourly pay that is negative.");
 
         this.name = name.trim();
