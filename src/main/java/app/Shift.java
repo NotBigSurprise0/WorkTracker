@@ -3,6 +3,8 @@ package app;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Objects;
 
 import app.enums.DisplayMode;
 
@@ -125,6 +127,25 @@ public class Shift
     public Job getJob()
     {
         return this.job;
+    }
+
+    /**
+     * Gets the total duration of a collection of {@code Shift}s.
+     * 
+     * @param shifts The Collection of Shifts to get the total duration
+     * @return A {@code Duration} with the duration of the total duration of all the shifts
+     * @throws NullPointerException If {@code shifts} is {@code null}
+     */
+    public static Duration getTotalDuration(Collection<Shift> shifts)
+    {
+        Objects.requireNonNull(shifts);
+
+        Duration totalDuration = Duration.ZERO;
+        for (Shift shift : shifts)
+        {
+            totalDuration = totalDuration.plus(shift.duration);
+        }
+        return totalDuration;
     }
 
     /**

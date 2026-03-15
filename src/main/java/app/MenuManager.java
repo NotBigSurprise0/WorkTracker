@@ -71,7 +71,8 @@ public class MenuManager
 
     static // Shift Statistics Menu
     {
-
+        SHIFT_DATA_MENU.addOption("Show total hours worked");
+        SHIFT_DATA_MENU.addOption("Show expected payment");
     }
 
     /**
@@ -715,7 +716,7 @@ public class MenuManager
     {
         if (this.currentShifts.isEmpty())
         {
-            System.out.println("There are currently no tracked shifts. Have you tried loading shifts or changing your filter?");
+            System.out.println("There are currently no loaded shifts. Have you tried loading shifts or changing your filter?");
             return;
         }
 
@@ -778,4 +779,14 @@ public class MenuManager
         System.out.println(" added to current shifts.");
     }
 
+    private void showTotalHoursWorkedMenu()
+    {
+        if (this.currentShifts.isEmpty())
+        {
+            System.out.println("There are currently no loaded shifts. Have you tried loading shifts or changing your filter?");
+            return;
+        }
+
+        
+    }
 }
