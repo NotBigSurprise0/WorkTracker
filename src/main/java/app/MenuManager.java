@@ -59,6 +59,8 @@ public class MenuManager
     static // Display Menu
     {
         DISPLAY_DATA_MENU.addOption("Show all jobs");
+        DISPLAY_DATA_MENU.addOption("Show all shifts");
+        DISPLAY_DATA_MENU.addOption("Show all shifts for a job");
     }
 
     static // Shift Menu
@@ -176,6 +178,8 @@ public class MenuManager
         switch (choice)
         {
             case 1 -> this.showAllJobsMenu();
+            case 2 -> this.showAllShiftsMenu();
+            case 3 -> this.showShiftsForJobMenu();
             default -> {}
         }
         pause(choice);
@@ -726,8 +730,58 @@ public class MenuManager
             return;
         }
 
-        List<String> jobNames = getJobNames(jobs);
-        System.out.println(jobNames);
+        System.out.println(jobs);
+    }
+
+    /**
+     * Shows all the shifts that have been recorded.
+     */
+    private void showAllShiftsMenu()
+    {
+        List<Shift> allShifts = this.workTracker.getAllShifts();
+        if (allShifts.isEmpty())
+        {
+            System.out.println("You have not crated any shifts. Have you tried adding a shift?");
+            return;
+        }
+
+        int size = allShifts.size();
+        if (size == 1) System.out.println("Here is the only shift:");
+        else System.out.println("Here are the " + size + " shifts:");
+        for (Shift shift : allShifts)
+        {
+            System.out.println(shift.display(DisplayMode.Times));
+        }
+    }
+
+    /**
+     * Shows all the shifts that have been recorded.
+     */
+    private void showShiftsForJobMenu()
+    {
+        if (this.workTracker.getJobs().isEmpty())
+        {
+            System.out.println("There are no jobs to get shifts from. Have you tried adding a job?");
+            return;
+        }
+
+        Job validJob = this.getValidJob("Enter the job to show shifts from");
+        if (validJob == null) return;
+
+        List<Shift> shifts = this.workTracker.getShifts(validJob);
+        if (shifts.isEmpty())
+        {
+            System.out.println("The job (" + validJob.getName() + ") does not have any shifts. Have you tried adding a shift?");
+            return;
+        }
+
+        int size = shifts.size();
+        if (size == 1) System.out.println("Here is the only shift:");
+        else System.out.println("Here are the " + size + " shifts:");
+        for (Shift shift : shifts)
+        {
+            System.out.println(shift.display(DisplayMode.Times));
+        }
     }
 
     /**
@@ -769,7 +823,7 @@ public class MenuManager
     {
         if (this.workTracker.getJobs().isEmpty())
         {
-            System.out.println("There are no jobs to get shifts from.");
+            System.out.println("There are no jobs to get shifts from. Have you tried adding a job?");
             return;
         }
 
