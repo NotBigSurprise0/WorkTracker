@@ -29,12 +29,21 @@ public class MenuManager
         MAIN_MENU.addOption("Show all shifts");
     }
 
+    /**
+     * Creates a new MenuManager, managing the given file.
+     * 
+     * @param file The file to manage
+     * @throws IOException If an error occurrs with the file
+     */
     public MenuManager(File file) throws IOException
     {
         this.currentShifts = new ArrayList<>();
         this.workTracker = new WorkTracker(file);
     }
 
+    /**
+     * Runs the MenuManager allowing for the user to choose from menus.
+     */
     public void run()
     {
         int choice = -1;
@@ -50,7 +59,7 @@ public class MenuManager
         }
     }
 
-    public void addJobMenu()
+    private void addJobMenu()
     {
         Job job = null;
         boolean jobExists = true;
@@ -122,6 +131,62 @@ public class MenuManager
     }
 
     /**
+     * Gets the hours, minutes, and seconds in 24-hour time of a time based on the parts of a time formatted as 'xx:yy:zz' and if it is am or pm.
+     * <p>
+     * Displays error messages if the time could not be converted into hours, minutes, and seconds
+     * 
+     * @param parts Each part of the time and can be length 2 or 3 if seconds are not included
+     * @param isPm Determines if the time is in the afternoon or not
+     * @return A Integer list containing the hours (0-23), minutes (0-59), and seconds (0-59) of the time if the parts could be converted, otherwise {@code null}
+     */
+    private static Integer[] getHoursMinutesSecondsFromTimeParts(String[] parts, boolean isPm)
+    {
+        if (!isNonNegativeInteger(parts[0]))
+        {
+            System.out.println("Invalid time. The hours part is not a valid number.");
+            return null;
+        }
+        int hours = Integer.parseInt(parts[0]);
+        if (hours == 0)
+        {
+            System.out.println("Invalid time. Hours cannot be 0.");
+            return null;
+        }
+        // Convert to 24 hour time
+        if (hours == 12 && !isPm) hours = 0;
+        else if (hours < 12 && isPm) hours += 12;
+
+        if (!isNonNegativeInteger(parts[1]))
+        {
+            System.out.println("Invalid time. The minutes part is not a valid number.");
+            return null;
+        }
+        int minutes = Integer.parseInt(parts[1]);
+        if (minutes < 0 || minutes >= 60)
+        {
+            System.out.println("Invalid time. Minutes part must be between 0 and 59.");
+            return null;
+        }
+
+        int seconds = 0;
+        if (parts.length == 3)
+        {
+            if (!isNonNegativeInteger(parts[2]))
+            {
+                System.out.println("Invalid time. Seconds part is not a valid number.");
+                return null;
+            }
+            seconds = Integer.parseInt(parts[2]);
+            if (seconds < 0 || seconds >= 60)
+            {
+                System.out.println("Invalid time. Seconds part must be between 0 and 59.");
+                return null;
+            }
+        }
+        return new Integer[]{hours, minutes, seconds};
+    }
+
+    /**
      * Gets a LocalTime from user input.
      * 
      * @param name The name shown when prompting the user
@@ -161,52 +226,90 @@ public class MenuManager
                 continue;
             }
 
-            if (!isNonNegativeInteger(timeParts[0]))
-            {
-                System.out.println("Invalid time. The hours part is not a valid number.");
-                continue;
-            }
-            int hours = Integer.parseInt(timeParts[0]);
-            if (hours == 0)
-            {
-                System.out.println("Invalid time. Hours cannot be 0.");
-                continue;
-            }
-            // Convert to 24 hour time
-            if (hours == 12 && !isPm) hours = 0;
-            else if (hours < 12 && isPm) hours += 12;
+            Integer[] numbers = getHoursMinutesSecondsFromTimeParts(timeParts, isPm);
+            if (numbers == null) continue;
 
-            if (!isNonNegativeInteger(timeParts[1]))
-            {
-                System.out.println("Invalid time. The minutes part is not a valid number.");
-                continue;
-            }
-            int minutes = Integer.parseInt(timeParts[1]);
-            if (minutes < 0 || minutes >= 60)
-            {
-                System.out.println("Invalid time. Minutes part must be between 0 and 59.");
-                continue;
-            }
-
-            int seconds = 0;
-            if (timeParts.length == 3)
-            {
-                if (!isNonNegativeInteger(timeParts[2]))
-                {
-                    System.out.println("Invalid time. Seconds part is not a valid number.");
-                    continue;
-                }
-                seconds = Integer.parseInt(timeParts[2]);
-                if (seconds < 0 || seconds >= 60)
-                {
-                    System.out.println("Invalid time. Seconds part must be between 0 and 59.");
-                    continue;
-                }
-            }
-
-            time = LocalTime.of(hours, minutes, seconds);
+            time = LocalTime.of(numbers[0], numbers[1], numbers[2]);
         }
         return time;
+    }
+
+    /**
+     * Gets a date from user input based on the number of days ago the date was.
+     * 
+     * @param name The name shown when prompting the user (cannot be {@code null})
+     * @return The {@code LocalDate} if the user didn't exit, otherwise {@code null} because the user exited
+     * @throws NullPointerException if {@code name} is {@code null}
+     */
+    private static LocalDate getDateFromDaysAgo(String name)
+    {
+        if (name == null) throw new NullPointerException("Name cannot be null.");
+
+        LocalDate date = null;
+        int daysAgo = -1;
+        while (daysAgo < 0)
+        {
+            System.out.print("Enter the number of days ago the " + name + " was (0 for today, '!' to exit): ");
+            if (scanner.hasNextInt())
+            {
+                daysAgo = scanner.nextInt();
+                if (daysAgo < 0)
+                    System.out.println("Negative days ago??? Come on man, be normal.");
+                else
+                {
+                    date = LocalDate.now().minus(Duration.ofDays(daysAgo));
+                    System.out.println("Date: " + date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")));
+                    System.out.print("Is this correct? ('y' for yes, anything else for no): ");
+                    if (!scanner.nextLine().trim().equalsIgnoreCase("Y")) daysAgo = -1;
+                }
+            }
+            else
+            {
+                if (scanner.nextLine().trim().equals("!"))
+                {
+                    System.out.println("Exiting...\n");
+                    return null;
+                }
+
+                System.out.println("That is not a number man.");
+            }
+        }
+
+        return date;
+    }
+
+    /**
+     * Gets a date from user input based on the user-provided string formatted as a date.
+     * 
+     * @param name The name shown when prompting the user (cannot be {@code null})
+     * @return The {@code LocalDate} if the user didn't exit, otherwise {@code null} because the user exited
+     * @throws NullPointerException if {@code name} is {@code null}
+     */
+    private static LocalDate getDateFromDateString(String name)
+    {
+        if (name == null) throw new NullPointerException("Name cannot be null.");
+
+        LocalDate date = null;
+        while (date == null)
+        {
+            System.out.print("Enter the " + name + " in the format 'yyyy-mm-dd' Eg. 2020-11-15 for November 15, 2020 ('!' to exit): ");
+            String result = scanner.nextLine().trim();
+            if (result.equals("!"))
+            {
+                System.out.println("Exiting...\n");
+                return null;
+            }
+
+            try
+            {
+                date = LocalDate.parse(result, DateTimeFormatter.ISO_LOCAL_DATE);
+            }
+            catch (DateTimeParseException d)
+            {
+                System.out.println("Invalid date");
+            }
+        }
+        return date;
     }
 
     /**
@@ -228,59 +331,12 @@ public class MenuManager
         }
 
         if (choice.equalsIgnoreCase("Y"))
-        {
-            int daysAgo = -1;
-            while (daysAgo < 0)
-            {
-                System.out.print("Enter the number of days ago the " + name + " was (0 for today, '!' to exit): ");
-                if (scanner.hasNextInt())
-                {
-                    daysAgo = scanner.nextInt();
-                    if (daysAgo < 0) System.out.println("Negative days ago??? Come on man, be normal.");
-                }
-                else
-                {
-                    if (scanner.nextLine().trim().equals("!"))
-                    {
-                        System.out.println("Exiting...\n");
-                        return null;
-                    }
-
-                    System.out.println("That is not a number man.");
-                }
-            }
-
-            LocalDate date = LocalDate.now().minus(Duration.ofDays(daysAgo));
-            System.out.println("Date: " + date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")));
-            return date;
-        }
+            return getDateFromDaysAgo(name);
         else
-        {
-            LocalDate date = null;
-            while (date == null)
-            {
-                System.out.print("Enter the " + name + " in the format 'yyyy-mm-dd' Eg. 2020-11-15 for November 15, 2020 ('!' to exit): ");
-                String result = scanner.nextLine().trim();
-                if (result.equals("!"))
-                {
-                    System.out.println("Exiting...\n");
-                    return null;
-                }
-
-                try
-                {
-                    date = LocalDate.parse(result, DateTimeFormatter.ISO_LOCAL_DATE);
-                }
-                catch (DateTimeParseException d)
-                {
-                    System.out.println("Invalid date");
-                }
-            }
-            return date;
-        }
+            return getDateFromDateString(name);
     }
 
-    public void addShiftMenu()
+    private void addShiftMenu()
     {
         List<Job> jobs = workTracker.getJobs();
         if (jobs.isEmpty())
@@ -321,6 +377,6 @@ public class MenuManager
         if (startTime == null) return;
 
         LocalDateTime start = LocalDateTime.of(startDate, startTime);
-        
+
     }
 }

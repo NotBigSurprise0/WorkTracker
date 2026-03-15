@@ -20,7 +20,7 @@ public class WorkTracker
      * Initializes jobs and shifts from the given file.
      * 
      * @param file The file to read from to get job and shift data or to create if one doesn't exist (cannot be {@code null})
-     * @throws IOException I actually do not know when this occurrs
+     * @throws IOException If an error occurrs with the file.
      * @throws NullPointerException If {@code file} is {@code null}
      */
     public WorkTracker(File file) throws IOException, NullPointerException
