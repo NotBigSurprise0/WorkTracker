@@ -93,7 +93,7 @@ public class MenuManager
      */
     private List<Shift> getSortedShifts()
     {
-        List<Shift> shifts = List.copyOf(this.currentShifts);
+        List<Shift> shifts = new ArrayList<>(this.currentShifts);
         shifts.sort(Comparator.comparing((Shift s) -> s.getJob().hashCode()).thenComparing((Shift s) -> s.hashCode()));
         return shifts;
     }
