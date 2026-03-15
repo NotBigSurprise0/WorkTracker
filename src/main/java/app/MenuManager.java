@@ -191,11 +191,7 @@ public class MenuManager
                 case 2 -> this.loadAllShiftsMenu();
                 case 3 -> this.clearCurrentShiftsMenu();
                 case 4 -> this.showCurrentShiftsMenu();
-                case 5 ->
-                {
-                    this.shiftStatisticsMenu();
-                    continue; // Not pause multiple times
-                }
+                case 5 -> this.shiftStatisticsMenu();
                 default -> {}
             }
             pause(choice);
@@ -212,7 +208,6 @@ public class MenuManager
         {
             default -> {}
         }
-        pause(choice);
     }
 
     /**
