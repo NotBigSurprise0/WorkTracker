@@ -60,6 +60,7 @@ public class MenuManager
                 case 4 -> this.showCurrentShiftsMenu();
                 case 5 -> this.clearCurrentShiftsMenu();
                 case 6 -> this.loadShiftsForJobMenu();
+                case 7 -> this.loadAllShiftsMenu();
                 default -> {}
             }
         }
@@ -560,6 +561,9 @@ public class MenuManager
         System.out.println();
     }
 
+    /**
+     * Loads the shifts for a job into the currently tracked shifts.
+     */
     private void loadShiftsForJobMenu()
     {
         if (this.workTracker.getJobs().isEmpty())
@@ -582,4 +586,22 @@ public class MenuManager
         System.out.println(" added to current shifts.");
         System.out.println();
     }
+
+    /**
+     * Loads all the shifts into the currently tracked shifts.
+     */
+    private void loadAllShiftsMenu()
+    {
+        int currentSize = this.currentShifts.size();
+        List<Shift> allShifts = this.workTracker.getAllShifts();
+        this.currentShifts.addAll(allShifts);
+        int newSize = this.currentShifts.size();
+        int newElements = newSize - currentSize;
+        System.out.print(newElements + " new element");
+        if (newElements == 1) System.out.print(" was");
+        else System.out.print("s were");
+        System.out.println(" added to current shifts.");
+        System.out.println();
+    }
+
 }
