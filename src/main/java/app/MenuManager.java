@@ -72,8 +72,8 @@ public class MenuManager
 
     static // Shift Statistics Menu
     {
-        SHIFT_DATA_MENU.addOption("Show total hours worked");
-        SHIFT_DATA_MENU.addOption("Show expected payment");
+        SHIFT_STATISTICS_MENU.addOption("Show total time worked");
+        SHIFT_STATISTICS_MENU.addOption("Show expected payment");
     }
 
     /**
@@ -211,6 +211,7 @@ public class MenuManager
         int choice = SHIFT_STATISTICS_MENU.display();
         switch (choice)
         {
+            case 1 -> this.showTotalTimeWorkedMenu();
             default -> {}
         }
     }
@@ -789,7 +790,7 @@ public class MenuManager
         System.out.println(" added to current shifts.");
     }
 
-    private void showTotalHoursWorkedMenu()
+    private void showTotalTimeWorkedMenu()
     {
         if (this.currentShifts.isEmpty())
         {
@@ -797,6 +798,8 @@ public class MenuManager
             return;
         }
 
-
+        int size = this.currentShifts.size();
+        Duration totalDuration = Shift.getTotalDuration(this.currentShifts);
+        System.out.println("Total time worked for " + size + " loaded shifts: " + Utility.formatDuration(totalDuration));
     }
 }
