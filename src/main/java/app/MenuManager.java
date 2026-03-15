@@ -340,6 +340,72 @@ public class MenuManager
             return getDateFromDateString(name);
     }
 
+    /**
+     * Gets a non negative integer from the user and reprompts until the number is valid, or the user types '!'.
+     * 
+     * @param text The message to display to the user when prompting for the number
+     * @return The non negative integer from the user if the user didn't exit, otherwise {@code null} because the user exited
+     */
+    private static Integer getNonNegativeInteger(String text)
+    {
+        Integer num = -1;
+        while (num < 0)
+        {
+            System.out.print(text);
+            if (scanner.hasNextInt())
+            {
+                num = scanner.nextInt();
+                if (num < 0) System.out.println("Number cannot be negative!");
+            }
+            else
+            {
+                if (scanner.nextLine().trim().equals("!"))
+                {
+                    System.out.println("Exiting...\n");
+                    return null;
+                }
+
+                System.out.println("That is not a number!");
+            }
+        }
+        return num;
+    }
+
+    /**
+     * Gets a duration from user input.
+     * 
+     * @param name The name shown when prompting the user
+     * @return The {@code Duration} if the user didn't exit, otherwise {@code null} because the user exited
+     * @throws NullPointerException if {@code name} is {@code null}
+     */
+    private static Duration getDuration(String name)
+    {
+        if (name == null) throw new NullPointerException("Name cannot be null.");
+
+        Duration duration = null;
+        while (duration == null)
+        {
+            Integer hours = getNonNegativeInteger("Enter the number of hours the " + name + " was ('!' to exit): ");
+            if (hours == null) return null;
+
+            Integer minutes = getNonNegativeInteger("Enter the number of minutes the " + name + " was ('!' to exit): ");
+            if (minutes == null) return null;
+
+            Integer seconds = getNonNegativeInteger("Enter the number of seconds the " + name + " was ('!' to exit): ");
+            if (seconds == null) return null;
+
+            duration = Duration.ofHours(hours);
+            duration = duration.plus(Duration.ofMinutes(minutes));
+            duration = duration.plus(Duration.ofSeconds(seconds));
+            if (duration.isZero())
+            {
+                System.out.print("The duration is 0. Are you sure this is what you want? ('y' for yes, anything else for no): ");
+                if (!scanner.nextLine().trim().equalsIgnoreCase("Y")) duration = null;
+            }
+        }
+        return duration;
+    }
+
     private void addShiftMenu()
     {
         List<Job> jobs = workTracker.getJobs();
@@ -381,6 +447,9 @@ public class MenuManager
         if (startTime == null) return;
 
         LocalDateTime start = LocalDateTime.of(startDate, startTime);
+        Duration duration = getDuration("shift");
+        if (duration == null) return;
 
+        
     }
 }
