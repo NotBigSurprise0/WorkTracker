@@ -659,6 +659,12 @@ public class MenuManager
         Job matchingJob = this.getValidJob("Enter the job this shift is for");
         if (matchingJob == null) return;
 
+        if (matchingJob.getCurrentHourlyPay() < 0)
+        {
+            System.out.println("This job (" + matchingJob.getName() + ") has an unknown hourly pay! Specify this before creating a shift.");
+            return;
+        }
+
         LocalDate startDate = getDate("start date");
         if (startDate == null) return;
 
