@@ -24,12 +24,13 @@ public class MenuManager
     private static final Menu REMOVE_DATA_MENU = new Menu("--Remove Data--");
     private static final Menu DISPLAY_DATA_MENU = new Menu("--Display Data--");
     private static final Menu SHIFT_DATA_MENU = new Menu("--Shift Data--");
+    private static final Menu SHIFT_STATISTICS_MENU = new Menu("-Shift Statistics-");
     private static final Scanner scanner = new Scanner(System.in);
 
     private final HashSet<Shift> currentShifts;
     private final WorkTracker workTracker;
 
-    static 
+    static // Main Menu
     {
         MAIN_MENU.addOption("Add data");
         MAIN_MENU.addOption("Change data");
@@ -38,33 +39,39 @@ public class MenuManager
         MAIN_MENU.addOption("Manage shift data");
     }
 
-    static
+    static // Add Menu
     {
         ADD_DATA_MENU.addOption("Add a job");
         ADD_DATA_MENU.addOption("Add a shift");
     }
 
-    static
+    static // Change Menu
     {
 
     }
 
-    static 
+    static // Remove Menu
     {
 
     }
 
-    static
+    static // Display Menu
     {
         DISPLAY_DATA_MENU.addOption("Show all jobs");
     }
 
-    static
+    static // Shift Menu
     {
         SHIFT_DATA_MENU.addOption("Load shifts for a job");
         SHIFT_DATA_MENU.addOption("Load all shifts");
         SHIFT_DATA_MENU.addOption("Clear loaded shifts");
         SHIFT_DATA_MENU.addOption("Show loaded shifts");
+        SHIFT_DATA_MENU.addOption("Get statistic from loaded shifts");
+    }
+
+    static // Shift Statistics Menu
+    {
+
     }
 
     /**
@@ -184,10 +191,28 @@ public class MenuManager
                 case 2 -> this.loadAllShiftsMenu();
                 case 3 -> this.clearCurrentShiftsMenu();
                 case 4 -> this.showCurrentShiftsMenu();
+                case 5 ->
+                {
+                    this.shiftStatisticsMenu();
+                    continue; // Not pause multiple times
+                }
                 default -> {}
             }
             pause(choice);
         }
+    }
+
+    /**
+     * Handles the shift statistics menu. Does not repeat.
+     */
+    public void shiftStatisticsMenu()
+    {
+        int choice = SHIFT_STATISTICS_MENU.display();
+        switch (choice)
+        {
+            default -> {}
+        }
+        pause(choice);
     }
 
     /**
