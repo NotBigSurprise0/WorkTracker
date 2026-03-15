@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
@@ -82,6 +84,34 @@ public class MenuManager
             }
 
         }
+    }
+
+    /**
+     * Sorts the current shifts and returns it as a list.
+     * 
+     * @return The {@code List} sorted with all shifts of the same job together.
+     */
+    private List<Shift> getSortedShifts()
+    {
+        List<Shift> shifts = List.copyOf(this.currentShifts);
+        shifts.sort(Comparator.comparing((Shift s) -> s.getJob().hashCode()).thenComparing((Shift s) -> s.hashCode()));
+        return shifts;
+    }
+
+    /**
+     * Gets a list of the names of each job in the list of jobs.
+     * 
+     * @param jobs The {@code List} of jobs
+     * @return A {@Code List} of {@code String}s with the names of each {@Code Job}
+     */
+    private static List<String> getJobNames(List<Job> jobs)
+    {
+        List<String> jobNames = new ArrayList<>();
+        for (Job job : jobs)
+        {
+            jobNames.add(job.getName());
+        }
+        return jobNames;
     }
 
     /**
@@ -328,7 +358,7 @@ public class MenuManager
         LocalDate date = null;
         while (date == null)
         {
-            System.out.print("Enter the " + name + " in the format 'yyyy-mm-dd' Eg. 2020-11-15 for November 15, 2020 ('!' to exit): ");
+            System.out.print("Enter the " + name + " in the format 'yyyy-mm-dd' Eg. 2020-05-15 for May 15, 2020 ('!' to exit): ");
             String result = scanner.nextLine().trim();
             if (result.equals("!"))
             {
@@ -448,14 +478,14 @@ public class MenuManager
      */
     private Job getValidJob(String message)
     {
-        List<Job> jobs = workTracker.getJobs();
+        List<String> jobNames = getJobNames(workTracker.getJobs());
 
         Job matchingJob = null;
         boolean jobExists = false;
         while (matchingJob == null || !jobExists)
         {
             System.out.println(message + " ('!' to exit)");
-            System.out.println("Valid jobs: " + jobs.toString());
+            System.out.println("Valid jobs: " + jobNames);
             String name = scanner.nextLine().trim();
             if (name.equals("!"))
             {
@@ -550,7 +580,8 @@ public class MenuManager
             return;
         }
 
-        System.out.println("Available jobs: " + jobs);
+        List<String> jobNames = getJobNames(jobs);
+        System.out.println(jobNames);
     }
 
     /**
@@ -564,7 +595,7 @@ public class MenuManager
             return;
         }
 
-        for (Shift shift : this.currentShifts)
+        for (Shift shift : this.getSortedShifts())
         {
             System.out.println(shift.display(DisplayMode.Times));
         }
