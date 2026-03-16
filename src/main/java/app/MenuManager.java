@@ -573,13 +573,16 @@ public class MenuManager
             }
             else
             {
-                if (scanner.nextLine().trim().equals("!"))
+                String line = scanner.nextLine().trim();
+                if (line.equals("!"))
                 {
                     System.out.println("Exiting...");
                     return null;
                 }
-
-                System.out.println("That is not a number!");
+                else if (line.isBlank())
+                    num = 0;
+                else
+                    System.out.println("That is not a number!");
             }
         }
         return num;
@@ -884,7 +887,7 @@ public class MenuManager
         while (shift == null)
         {
             System.out.print("Enter the name of the shift ('!' to exit): ");
-            String shiftName = scanner.nextLine();
+            String shiftName = scanner.nextLine().trim();
             if (shiftName.isBlank())
             {
                 System.out.println("Shifts cannot have a blank name!");
@@ -928,7 +931,7 @@ public class MenuManager
     private Shift selectShift()
     {
         System.out.print("Do you want to select a shift from a specific job, or from all shifts? ('y' for from a specific job, '!' to exit, anything else for from all shifts): ");
-        String result = scanner.nextLine();
+        String result = scanner.nextLine().trim();
         if (result.equals("!"))
         {
             System.out.println("Exiting...");
@@ -977,7 +980,7 @@ public class MenuManager
         }
 
         System.out.print("Do you know the name of the shift? ('y' for yes, '!' to exit, anything else for no): ");
-        String result = scanner.nextLine();
+        String result = scanner.nextLine().trim();
         if (result.equals("!"))
         {
             System.out.println("Exiting...");
@@ -998,9 +1001,49 @@ public class MenuManager
             System.out.println("Shift: " + shift.display(DisplayMode.Times) + " is already in loaded shifts.");
     }
 
+    /**
+     * Removes a shift selected by the user from loaded shifts.
+     */
     private void removeSpecificShiftMenu()
     {
+        if (this.currentShifts.isEmpty())
+        {
+            System.out.println("There are no loaded shifts. There's nothing to remove!");
+            return;
+        }
 
+        List<Shift> sortedLoadedShifts = this.getSortedShifts();
+        Menu loadedShiftMenu = new Menu("Loaded shifts:");
+        for (Shift loadedShift : sortedLoadedShifts)
+            loadedShiftMenu.addOption(loadedShift.display(DisplayMode.Times));
+
+        Shift shiftBeingRemoved = null;
+        while (shiftBeingRemoved == null)
+        {
+            int choice = loadedShiftMenu.display();
+            if (choice == 0)
+            {
+                System.out.println("Exiting...");
+                return;
+            }
+
+            shiftBeingRemoved = sortedLoadedShifts.get(choice - 1);
+            System.out.print("You selected shift: " + shiftBeingRemoved.display(DisplayMode.Times) + " Is this correct? ('y' for yes, '!' to exit, anything else for no): ");
+            String result = scanner.nextLine().trim();
+            if (result.equals("!"))
+            {
+                System.out.println("Exiting...");
+                return;
+            }
+
+            if (!result.equalsIgnoreCase("Y")) shiftBeingRemoved = null;
+        }
+
+        boolean success = this.currentShifts.remove(shiftBeingRemoved);
+        if (success)
+            System.out.println("Shift: " + shiftBeingRemoved.display(DisplayMode.Times) + " successfully removed.");
+        else
+            System.out.println("An error occurred removing shift: " + shiftBeingRemoved.display(DisplayMode.Times) + " and it was not removed. Please try again.");
     }
 
     /**
