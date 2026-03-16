@@ -31,6 +31,8 @@ public class MenuManager
     private final HashSet<Shift> currentShifts;
     private final WorkTracker workTracker;
 
+    // TODO Add methods to either add a specific shift to loaded shifts or remove a specific shift (use a menu to select the shift).
+
     static // Main Menu
     {
         MAIN_MENU.addOption("Add data");
@@ -67,6 +69,8 @@ public class MenuManager
     {
         SHIFT_DATA_MENU.addOption("Load shifts for a job");
         SHIFT_DATA_MENU.addOption("Load all shifts");
+        SHIFT_DATA_MENU.addOption("Load specific shift");
+        SHIFT_DATA_MENU.addOption("Remove shift from loaded shifts");
         SHIFT_DATA_MENU.addOption("Clear loaded shifts");
         SHIFT_DATA_MENU.addOption("Show loaded shifts");
         SHIFT_DATA_MENU.addOption("Get statistic from loaded shifts");
@@ -198,9 +202,11 @@ public class MenuManager
             {
                 case 1 -> this.loadShiftsForJobMenu();
                 case 2 -> this.loadAllShiftsMenu();
-                case 3 -> this.clearCurrentShiftsMenu();
-                case 4 -> this.showCurrentShiftsMenu();
-                case 5 -> this.shiftStatisticsMenu();
+                case 3 -> this.loadSpecificShiftMenu();
+                case 4 -> this.removeSpecificShiftMenu();
+                case 5 -> this.clearCurrentShiftsMenu();
+                case 6 -> this.showCurrentShiftsMenu();
+                case 7 -> this.shiftStatisticsMenu();
                 default -> {}
             }
             pause(choice);
@@ -861,6 +867,140 @@ public class MenuManager
         if (newElements == 1) System.out.print(" was");
         else System.out.print("s were");
         System.out.println(" added to current shifts.");
+    }
+
+    /**
+     * Gets a shift from the given options from user input as the user selects a shift by name.
+     * 
+     * @param shiftOptions The shifts that can be chosen by the user (cannot be {@code null})
+     * @return The user's chosen {@code Shift} if the user didn't exit, otherwsie {@code null} because the user exited
+     * @throws NullPointerException If {@code shiftOptions} is {@code null}
+     */
+    private static Shift getShiftByNameFromUser(List<Shift> shiftOptions)
+    {
+        Objects.requireNonNull(shiftOptions, "Shift options cannot be null");
+
+        Shift shift = null;
+        while (shift == null)
+        {
+            System.out.print("Enter the name of the shift ('!' to exit): ");
+            String shiftName = scanner.nextLine();
+            if (shiftName.isBlank())
+            {
+                System.out.println("Shifts cannot have a blank name!");
+                continue;
+            }
+            else if (shiftName.equals("!"))
+            {
+                System.out.println("Exiting...");
+                return null;
+            }
+
+            List<Shift> possibleShifts = Shift.getShiftsWithName(shiftOptions, shiftName);
+            if (possibleShifts.isEmpty())
+                System.out.println("No shifts exit with that name " + shiftName + "!");
+            else if (possibleShifts.size() == 1)
+                shift = possibleShifts.get(0);
+            else
+            {
+                System.out.println("There are multiple shifts with that name. Please select the one you want to add.");
+                Menu shiftMenu = new Menu("Shifts:");
+                for (Shift possibleshift : possibleShifts)
+                    shiftMenu.addOption(possibleshift.display(DisplayMode.Times));
+                int choice = shiftMenu.display();
+                if (choice == 0)
+                {
+                    System.out.println("Exiting...");
+                    return null;
+                }
+
+                shift = possibleShifts.get(choice - 1);
+            }
+        }
+        return shift;
+    }
+
+    /**
+     * Prompts the user to select a shift either from all shifts or shifts for a certain job based on their choice and returns the selected shift.
+     * 
+     * @return The user selected {@code Shift} if the user didn't exit, otherwise {@code null} because the user exited
+     */
+    private Shift selectShift()
+    {
+        System.out.print("Do you want to select a shift from a specific job, or from all shifts? ('y' for from a specific job, '!' to exit, anything else for from all shifts): ");
+        String result = scanner.nextLine();
+        if (result.equals("!"))
+        {
+            System.out.println("Exiting...");
+            return null;
+        }
+
+        List<Shift> shiftOptions;
+        if (result.equalsIgnoreCase("Y"))
+        {
+            Job job = getValidJob("Enter the job to get shifts from");
+            if (job == null) return null;
+
+            shiftOptions = this.workTracker.getShifts(job);
+            if (shiftOptions.isEmpty())
+            {
+                System.out.println("There are no shifts for that job. Exiting...");
+                return null;
+            }
+        }
+        else
+            shiftOptions = this.workTracker.getAllShifts();
+
+        Menu shiftMenu = new Menu("Shifts:");
+        for (Shift shiftOption : shiftOptions)
+            shiftMenu.addOption(shiftOption.display(DisplayMode.Times));
+        int choice = shiftMenu.display();
+        if (choice == 0)
+        {
+            System.out.println("Exiting...");
+            return null;
+        }
+
+        return shiftOptions.get(choice - 1);
+    }
+
+    /**
+     * Loads a user selected shift into the loaded shifts.
+     */
+    private void loadSpecificShiftMenu()
+    {
+        List<Shift> allShifts = this.workTracker.getAllShifts();
+        if (allShifts.isEmpty())
+        {
+            System.out.println("You have not crated any shifts. Have you tried adding a shift?");
+            return;
+        }
+
+        System.out.print("Do you know the name of the shift? ('y' for yes, '!' to exit, anything else for no): ");
+        String result = scanner.nextLine();
+        if (result.equals("!"))
+        {
+            System.out.println("Exiting...");
+            return;
+        }
+
+        Shift shift;
+        if (result.equalsIgnoreCase("Y"))
+            shift = getShiftByNameFromUser(this.workTracker.getAllShifts());
+        else
+            shift = this.selectShift();
+        if (shift == null) return;
+
+        boolean newAdded = this.currentShifts.add(shift);
+        if (newAdded)
+            System.out.println("Shift: " + shift.display(DisplayMode.Times) + " successfully added to loaded shifts.");
+        else
+            System.out.println("Shift: " + shift.display(DisplayMode.Times) + " is already in loaded shifts.");
+    }
+
+    private void removeSpecificShiftMenu()
+    {
+
     }
 
     /**

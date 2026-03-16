@@ -3,7 +3,9 @@ package app;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import app.enums.DisplayMode;
@@ -64,7 +66,7 @@ public class Shift
      */
     public Shift(Job job, LocalDateTime start, LocalDateTime end)
     {
-        this(Shift.DEFAULT_NAME + " (" + Shift.nextId + ")", job, start, end);
+        this(Shift.DEFAULT_NAME + " - " + Shift.nextId, job, start, end);
     }
 
     /**
@@ -108,7 +110,7 @@ public class Shift
      */
     public Shift(Job job, LocalDateTime start, Duration duration)
     {
-        this(Shift.DEFAULT_NAME + " (" + Shift.nextId + ")", job, start, duration);
+        this(Shift.DEFAULT_NAME + " - " + Shift.nextId, job, start, duration);
     }
 
     /**
@@ -169,6 +171,28 @@ public class Shift
             total += pay;
         }
         return total;
+    }
+
+    /**
+     * Gets all shifts with the given name from the given list of shifts.
+     * <p>
+     * Case is ignored ("nAmE1" == "naMe1")
+     * 
+     * @param shifts The shifts to select from
+     * @param name The name to match to the shifts
+     * @return A {@code List} of {@code Shift} where all the shifts have the name {@code name} case insensitive
+     * @throws NullPointerException If {@code shifts} or {@code name} is {@code null}
+     */
+    public static List<Shift> getShiftsWithName(List<Shift> shifts, String name)
+    {
+        Objects.requireNonNull(shifts, "Shifts cannot be null");
+        Objects.requireNonNull(name, "Name cannot be null");
+
+        List<Shift> shiftswithName = new ArrayList<>();
+        for (Shift shift : shifts)
+            if (shift.name.equalsIgnoreCase(name))
+                shiftswithName.add(shift);
+        return shiftswithName;
     }
 
     /**
