@@ -31,8 +31,6 @@ public class MenuManager
     private final HashSet<Shift> currentShifts;
     private final WorkTracker workTracker;
 
-    // TODO Add methods to either add a specific shift to loaded shifts or remove a specific shift (use a menu to select the shift).
-
     static // Main Menu
     {
         MAIN_MENU.addOption("Add data");
