@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -193,6 +194,24 @@ public class Shift
             if (shift.name.equalsIgnoreCase(name))
                 shiftswithName.add(shift);
         return shiftswithName;
+    }
+
+    /**
+     * Returns the given Collection of shifts sorted by id.
+     * <p>
+     * {@code shifts} is not modified.
+     * 
+     * @param shifts The shifts to sort (not modified) (cannot be {@code null})
+     * @return A {@code List} of {@code Shift} that is sorted by id from the given Collection
+     * @throws NullPointerException If {@code shifts} is {@code null}
+     */
+    public static List<Shift> sortShiftsById(Collection<Shift> shifts)
+    {
+        Objects.requireNonNull(shifts, "Shifts cannot be null");
+
+        List<Shift> sortedShifts = new ArrayList<>(shifts);
+        sortedShifts.sort(Comparator.comparing((Shift s) -> s.id));
+        return sortedShifts;
     }
 
     /**
