@@ -3,6 +3,7 @@ package app;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -45,13 +46,12 @@ public class Shift
         if (calculatedDuration.isNegative()) throw new IllegalArgumentException("End cannot be before start");
 
         this.name = name;
-        this.id = Shift.nextId;
+        this.id = Shift.nextId++;
         this.job = job;
         this.start = start;
         this.end = end;
         this.duration = calculatedDuration;
         this.hourlyWage = job.getCurrentHourlyWage();
-        Shift.nextId++;
     }
 
     /**
@@ -89,13 +89,12 @@ public class Shift
         LocalDateTime calculatedEnd = start.plus(duration);
 
         this.name = name;
-        this.id = Shift.nextId;
+        this.id = Shift.nextId++;
         this.job = job;
         this.start = start;
         this.end = calculatedEnd;
         this.duration = duration;
         this.hourlyWage = job.getCurrentHourlyWage();
-        Shift.nextId++;
     }
 
     /**
@@ -112,6 +111,36 @@ public class Shift
     public Shift(Job job, LocalDateTime start, Duration duration)
     {
         this(Shift.DEFAULT_NAME + " - " + Shift.nextId, job, start, duration);
+    }
+
+    /**
+     * Creates a new shift for a job from the given start and end time with the given name and hourlyWage.
+     * <p>
+     * This constructor is only intended to be used for creating shifts when reading from files and not meant to be for users.
+     * 
+     * @param name The name (identifier) for the shift (cannot be {@code null})
+     * @param job The job the shift is for (cannot be {@code null})
+     * @param start The start time of the shift (cannot be {@code null}) (cannot be after {@code end})
+     * @param end The end time of the shift (cannot be {@code null}) (cannot be before {@code start})
+     * @param hourlyWage The hourly wage for the shift
+     * @throws NullPointerException If any argument is {@code null}
+     * @throws IllegalArgumentException If {@code start} is after {@code end}
+     */
+    private Shift(String name, Job job, LocalDateTime start, LocalDateTime end, double hourlyWage)
+    {
+        if (name == null || job == null || start == null || end == null) throw new NullPointerException("Arguments cannot be null");
+        if (job.getCurrentHourlyWage() < 0) throw new IllegalArgumentException("The hourly wage for the job cannot be negative");
+
+        Duration calculatedDuration = Duration.between(start, end);
+        if (calculatedDuration.isNegative()) throw new IllegalArgumentException("End cannot be before start");
+
+        this.name = name;
+        this.id = Shift.nextId++;
+        this.job = job;
+        this.start = start;
+        this.end = end;
+        this.duration = calculatedDuration;
+        this.hourlyWage = hourlyWage;
     }
 
     /**
@@ -250,6 +279,32 @@ public class Shift
         String name = getStringBetweenStringAndComma(str, "Name: ");
         if (name == null) return null;
 
+        String jobString = getStringBetweenStringAndComma(str, "Job: ");
+        if (jobString == null) return null;
+
+        Job job = Job.parseJob(jobString);
+        if (job == null) return null;
+
+        String startString = getStringBetweenStringAndComma(str, "Start: ");
+        if (startString == null) return null;
+
+        String endString = getStringBetweenStringAndComma(str, "End: ");
+        if (endString == null) return null;
+
+        String wageString = getStringBetweenStringAndComma(str, "Hourly wage: ");
+        if (wageString == null) return null;
+
+        try
+        {
+            LocalDateTime start = LocalDateTime.parse(startString);
+            LocalDateTime end = LocalDateTime.parse(endString);
+            double hourlyWage = Double.parseDouble(wageString);
+            return new Shift(name, job, start, end, hourlyWage);
+        }
+        catch (DateTimeParseException | NumberFormatException e)
+        {
+            return null;
+        }
     }
 
     /**
