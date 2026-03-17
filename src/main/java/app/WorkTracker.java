@@ -228,6 +228,23 @@ public class WorkTracker
     }
 
     /**
+     * Deletes a shift if the shift has the same id as one in all shifts.
+     * 
+     * @param shift The shift to delete (cannot be {@code null})
+     * @return {@code true} if {@code shift} was found in shifts and successfully removed, otherwise {@code false}
+     * @throws NullPointerException If {@code shift} is {@code null}
+     */
+    public boolean deleteShift(Shift shift)
+    {
+        Objects.requireNonNull(shift, "Shift cannot be null");
+
+        ArrayList<Shift> jobShifts = this.shifts.get(shift.getJob());
+        if (jobShifts == null) return false;
+        
+        return jobShifts.remove(shift);
+    }
+
+    /**
      * Saves job and shift data to the file being tracked.
      * 
      * @return {@code true} If the data was saved successfully, otherwise {@code false}

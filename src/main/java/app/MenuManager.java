@@ -789,9 +789,49 @@ public class MenuManager
             System.out.println("An error occurred and the job was not deleted. Please try again.");
     }
 
+    /**
+     * Deletes a shift based on usre input.
+     */
     private void deleteShiftMenu()
     {
+        List<Shift> allShifts = this.workTracker.getAllShifts();
+        if (allShifts.isEmpty())
+        {
+            System.out.println("There are not shifts to delete.");
+            return;
+        }
 
+        System.out.print("Do you know the name of the shift? ('y' for yes, '!' to exit, anything else for no): ");
+        String result = scanner.nextLine().strip();
+        if (result.equals("!"))
+        {
+            System.out.println("Exiting...");
+            return;
+        }
+
+        Shift shift;
+        if (result.equalsIgnoreCase("Y"))
+            shift = getShiftByNameFromUser(this.workTracker.getAllShifts());
+        else
+            shift = this.selectShift();
+        if (shift == null) return;
+
+        System.out.print("You selected shift: " + shift.display(DisplayMode.Times) + " Are you sure you want to delete this shift ('yes' for yes, anything else for no): ");
+        if (!scanner.nextLine().strip().equalsIgnoreCase("Yes"))
+        {
+            System.out.println("Exiting...");
+            return;
+        }
+
+        boolean success = this.workTracker.deleteShift(shift);
+        if (success)
+        {
+            System.out.println("Shift: " + shift.display(DisplayMode.Times) + " successfully deleted.");
+            boolean removedFromLoadedShifts = this.currentShifts.remove(shift);
+            if (removedFromLoadedShifts) System.out.println("The shift was also in loaded shifts, so it was removed from there too.");
+        }
+        else
+            System.out.println("An error occurred deleting the shift and it was not deleted. Please try again.");
     }
 
     /**
