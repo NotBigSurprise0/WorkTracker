@@ -1,7 +1,12 @@
 package app;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +19,7 @@ public class WorkTracker
      */
     private HashMap<Job, Job> jobLookUp;
     private HashMap<Job, ArrayList<Shift>> shifts;
-    private File destinationFile;
+    private Path destinationPath;
 
     /**
      * Initializes jobs and shifts from the given file.
@@ -27,7 +32,7 @@ public class WorkTracker
     {
         if (file == null) throw new NullPointerException("File cannot be null");
 
-        this.destinationFile = file;
+        this.destinationPath = Paths.get(file.getPath());
         if (!file.exists())
         {
             this.jobLookUp = new HashMap<>();
@@ -157,10 +162,45 @@ public class WorkTracker
     }
 
     /**
-     * Saves the jobs and shifts data to the file.
+     * Saves job and shift data to the file being tracked.
+     * 
+     * @return {@code true} If the data was saved successfully, otherwise {@code false}
      */
-    public void save()
+    public boolean save()
     {
-
+        List<Job> jobs = this.getJobs();
+        List<Shift> sortedShifts = Shift.sortShiftsById(this.getAllShifts());
+        String tempPath = this.destinationPath.getParent() + "\\temp.txt";
+        try (FileWriter writer = new FileWriter(tempPath))
+        {
+            for (Job job : jobs)
+            {
+                writer.write(job.toString());
+                writer.write("\n");
+            }
+            writer.write("\n");
+            for (Shift shift : sortedShifts)
+            {
+                writer.write(shift.toString());
+                writer.write("\n");
+            }
+            writer.flush();
+        }
+        catch (IOException e)
+        {
+            return false;
+        }
+        
+        try
+        {
+            Path source = Paths.get(tempPath);
+            Path target = destinationPath;
+            Files.move(source, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+        }
+        catch (IOException e)
+        {
+            return false;
+        }
+        return true;
     }
 }

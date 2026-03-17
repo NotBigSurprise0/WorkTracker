@@ -128,6 +128,19 @@ public class MenuManager
                 default -> {}
             }
         }
+        this.save();
+    }
+
+    /**
+     * Saves the data in {@code workTracker} to the file while printing messages for success/failure.
+     */
+    public void save()
+    {
+        boolean success = this.workTracker.save();
+        if (success)
+            System.out.println("Data saved successfully.");
+        else
+            System.out.println("An error occurred while saving data. Please try again.");
     }
 
     /**
@@ -142,6 +155,7 @@ public class MenuManager
             case 2 -> this.addShiftMenu();
             default -> {}
         }
+        this.save();
         pause(choice);
     }
 
@@ -155,6 +169,7 @@ public class MenuManager
         {
             default -> {}
         }
+        this.save();
         pause(choice);
     }
 
@@ -168,6 +183,7 @@ public class MenuManager
         {
             default -> {}
         }
+        this.save();
         pause(choice);
     }
 

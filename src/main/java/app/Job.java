@@ -4,6 +4,8 @@ import java.util.Objects;
 
 public class Job
 {
+    private static final String UNKNOWN_WAGE_STRING = "Unknwon wage";
+
     private String name;
     private double hourlyWage;
 
@@ -85,10 +87,41 @@ public class Job
         return true;
     }
 
+    /**
+     * Returns a new {@code Job} initialized to be the value represented by the specified {@code String}.
+     * 
+     * @param str THe string to be parsed
+     * @return The {@code Job} value represented by the string argument if valid, otherwise {@code null}
+     */
+    public static Job parseJob(String str)
+    {
+        if (str == null) return null;
+
+        String[] parts = str.split(":");
+        if (parts.length != 2) return null;
+
+        String name = parts[0].trim();
+        if (name.isBlank()) return null;
+
+        String wageString = parts[1].trim();
+        if (wageString.equalsIgnoreCase(UNKNOWN_WAGE_STRING))
+            return new Job(name);
+
+        try
+        {
+            double wage = Double.parseDouble(wageString);
+            return new Job(name, wage);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return null;
+        }
+    }
+
     @Override
     public String toString()
     {
-        if (this.hourlyWage == -1) return this.name + ": Unknown wage";
+        if (this.hourlyWage == -1) return this.name + ": " + UNKNOWN_WAGE_STRING;
 
         return this.name + ": " + Utility.formatPay(this.hourlyWage);
     }
