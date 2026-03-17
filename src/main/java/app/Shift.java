@@ -270,34 +270,37 @@ public class Shift
      * The string should be formatted as the result of the toString() method on a Shift object.
      * 
      * @param str The string to be parsed
-     * @return The {@code Shift} value represented by the string argument if valid, otherwise {@code null}
+     * @param validJobs The possible Jobs that are allowed to be a Job for the Shift being created
+     * @return The {@code Shift} value represented by the string argument if valid
+     * @throws NullPointerException If {@code str} or {@code validJobs} is {@code null}
+     * @throws IllegalArgumentException If {@code str} is formatted incorrectly
      */
-    public static Shift parseShift(String str, Collection<Job> validJobs)
+    public static Shift parseShift(String str, Collection<Job> validJobs) throws IllegalArgumentException
     {
-        if (str == null) return null;
+        Objects.requireNonNull(str, "String cannot be null");
+        Objects.requireNonNull(validJobs, "Valid jobs cannot be null");
 
         String name = getStringBetweenStringAndComma(str, "Name: ");
-        if (name == null) return null;
+        if (name == null) throw new IllegalArgumentException("String: " + str + " could not be converted to a Shift as the Shift does not have a valid name");
 
         String jobString = getStringBetweenStringAndComma(str, "Job: ");
-        if (jobString == null) return null;
+        if (jobString == null) throw new IllegalArgumentException("String: " + str + " could not be converted to a Shift as the Shift does not have a valid job");
 
         Job job = Job.parseJob(jobString);
-        if (job == null) return null;
         Job matchingJob = null;
         for (Job validJob : validJobs)
             if (validJob.equals(job))
                 matchingJob = validJob;
-        if (matchingJob == null) return null;
+        if (matchingJob == null) throw new IllegalArgumentException("String: " + str + " could not be converted to a Shift as the Shift's job does not match any of the valid ones");
 
         String startString = getStringBetweenStringAndComma(str, "Start: ");
-        if (startString == null) return null;
+        if (startString == null) throw new IllegalArgumentException("String: " + str + " could not be converted to a Shift as the Shift does not have a valid start date");
 
         String endString = getStringBetweenStringAndComma(str, "End: ");
-        if (endString == null) return null;
+        if (endString == null) throw new IllegalArgumentException("String: " + str + " could not be converted to a Shift as the Shift does not have a valid end date");
 
         String wageString = getStringBetweenStringAndComma(str, "Hourly wage: ");
-        if (wageString == null) return null;
+        if (wageString == null) throw new IllegalArgumentException("String: " + str + " could not be converted to a Shift as the Shift does not have a valid wage");
 
         try
         {
@@ -306,9 +309,13 @@ public class Shift
             double hourlyWage = Double.parseDouble(wageString);
             return new Shift(name, matchingJob, start, end, hourlyWage);
         }
-        catch (DateTimeParseException | NumberFormatException e)
+        catch (DateTimeParseException e)
         {
-            return null;
+            throw new IllegalArgumentException("String: " + str + " could not be converted to a Shift as the Shift's start date or end date could not be converted to a Date");
+        }
+        catch (NumberFormatException e)
+        {
+            throw new IllegalArgumentException("String: " + str + " could not be converted to a Shift as the Shift's wage is not a number");
         }
     }
 

@@ -93,20 +93,22 @@ public class Job
      * The string should be formatted as the result of the toString() method on a Job object.
      * 
      * @param str The string to be parsed
-     * @return The {@code Job} value represented by the string argument if valid, otherwise {@code null}
+     * @return The {@code Job} value represented by the string argument if valid
+     * @throws NullPointerException If {@code str} is {@code null}
+     * @throws IllegalArgumentException If {@code str} is formatted incorrectly
      */
-    public static Job parseJob(String str)
+    public static Job parseJob(String str) throws IllegalArgumentException
     {
-        if (str == null) return null;
+        Objects.requireNonNull(str, "String must not be null");
 
         String[] parts = str.split(":");
-        if (parts.length != 2) return null;
+        if (parts.length != 2) throw new IllegalArgumentException("String: " + str + " could not be converted to a Job as it is formatted incorrectly");
 
         String name = parts[0].strip();
-        if (name.isBlank()) return null;
+        if (name.isBlank()) throw new IllegalArgumentException("String: " + str + " could not be converted to a Job as name is blank");
 
         String wageString = parts[1].strip().replace("$", "");
-        if (wageString.equalsIgnoreCase(UNKNOWN_WAGE_STRING))
+        if (wageString.equals(UNKNOWN_WAGE_STRING))
             return new Job(name);
 
         try
@@ -116,7 +118,7 @@ public class Job
         }
         catch (IllegalArgumentException e)
         {
-            return null;
+            throw new IllegalArgumentException("String: " + str + " could not be converted to a Job as wage is not a number");
         }
     }
 

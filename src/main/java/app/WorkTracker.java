@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Objects;
 
 public class WorkTracker
 {
@@ -20,6 +21,54 @@ public class WorkTracker
     private HashMap<Job, Job> jobLookUp;
     private HashMap<Job, ArrayList<Shift>> shifts;
     private Path destinationPath;
+
+    /**
+     * Method used to initialize fields from an existing file that is being read.
+     * 
+     * @param scanner The {@code Scanner} object reading the file (cannot be {@code null})
+     * @param filePath The {@code String} path to the file for error messages (cannot be {@code null})
+     * @throws NullPointerException If {@code scanner} or {@code filePath} is {@code null}
+     * @throws IllegalArgumentException If the file being read is incorrectly formatted
+     */
+    private void initFieldsFromFile(Scanner scanner, String filePath) throws IllegalArgumentException
+    {
+        Objects.requireNonNull(scanner, "Scanner cannot be null");
+        Objects.requireNonNull(filePath, "File path cannot be null");
+
+        boolean collectingJobs = true;
+        int lineNumber = 0;
+        while (scanner.hasNextLine())
+        {
+            lineNumber++;
+            String line = scanner.nextLine();
+            if (line.isBlank())
+            {
+                collectingJobs = false;
+                continue;
+            }
+
+            try
+            {
+                if (collectingJobs)
+                {
+                    Job job = Job.parseJob(line);
+                    Job lowercaseJob = new Job(job.getName().toLowerCase(), job.getCurrentHourlyWage());
+                    this.jobLookUp.put(lowercaseJob, job);
+                }
+                else
+                {
+                    Shift shift = Shift.parseShift(line, this.jobLookUp.values());
+                    this.shifts.putIfAbsent(shift.getJob(), new ArrayList<>());
+                    this.shifts.get(shift.getJob()).add(shift);
+                }
+            }
+            catch (IllegalArgumentException e)
+            {
+                throw new IllegalArgumentException("Line " + lineNumber + " of " + filePath + " is incorrectly formatted: " + e.getMessage());
+            }
+        }
+        System.out.println("Existing data loaded successfully.");
+    }
 
     /**
      * Initializes jobs and shifts from the given file.
@@ -46,34 +95,7 @@ public class WorkTracker
             this.jobLookUp = new HashMap<>();
             this.shifts = new HashMap<>();
 
-            boolean collectingJobs = true;
-            int lineNumber = 0;
-            while (scanner.hasNextLine())
-            {
-                lineNumber++;
-                String line = scanner.nextLine();
-                if (line.isBlank())
-                {
-                    collectingJobs = false;
-                    continue;
-                }
-
-                if (collectingJobs)
-                {
-                    Job job = Job.parseJob(line);
-                    if (job == null) throw new IllegalArgumentException("Line " + lineNumber + " of " + file.getPath() + " is an incorrectly formatted Job");
-                    Job lowercaseJob = new Job(job.getName().toLowerCase(), job.getCurrentHourlyWage());
-                    this.jobLookUp.put(lowercaseJob, job);
-                }
-                else
-                {
-                    Shift shift = Shift.parseShift(line, this.jobLookUp.values());
-                    if (shift == null) throw new IllegalArgumentException("Line " + lineNumber + " of " + file.getPath() + " is an incorrectly formatted Shift");
-                    this.shifts.putIfAbsent(shift.getJob(), new ArrayList<>());
-                    this.shifts.get(shift.getJob()).add(shift);
-                }
-            }
-            System.out.println("Existing data loaded successfully.");
+            initFieldsFromFile(scanner, file.getPath());
         }
         catch (IOException e)
         {
