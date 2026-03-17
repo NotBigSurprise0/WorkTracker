@@ -27,8 +27,9 @@ public class WorkTracker
      * @param file The file to read from to get job and shift data or to create if one doesn't exist (cannot be {@code null})
      * @throws IOException If an error occurrs with the file.
      * @throws NullPointerException If {@code file} is {@code null}
+     * @throws IllegalArgumentException If the file given exists and is formatted incorrectly
      */
-    public WorkTracker(File file) throws IOException, NullPointerException
+    public WorkTracker(File file) throws IOException, NullPointerException, IllegalArgumentException
     {
         if (file == null) throw new NullPointerException("File cannot be null");
 
@@ -42,9 +43,37 @@ public class WorkTracker
 
         try (Scanner scanner = new Scanner(file))
         {
-            //! COMPLETE
             this.jobLookUp = new HashMap<>();
             this.shifts = new HashMap<>();
+
+            boolean collectingJobs = true;
+            int lineNumber = 0;
+            while (scanner.hasNextLine())
+            {
+                lineNumber++;
+                String line = scanner.nextLine();
+                if (line.isBlank())
+                {
+                    collectingJobs = false;
+                    continue;
+                }
+
+                if (collectingJobs)
+                {
+                    Job job = Job.parseJob(line);
+                    if (job == null) throw new IllegalArgumentException("Line " + lineNumber + " of " + file.getPath() + " is an incorrectly formatted Job");
+                    Job lowercaseJob = new Job(job.getName().toLowerCase(), job.getCurrentHourlyWage());
+                    this.jobLookUp.put(lowercaseJob, job);
+                }
+                else
+                {
+                    Shift shift = Shift.parseShift(line, this.jobLookUp.values());
+                    if (shift == null) throw new IllegalArgumentException("Line " + lineNumber + " of " + file.getPath() + " is an incorrectly formatted Shift");
+                    this.shifts.putIfAbsent(shift.getJob(), new ArrayList<>());
+                    this.shifts.get(shift.getJob()).add(shift);
+                }
+            }
+            System.out.println("Existing data loaded successfully.");
         }
         catch (IOException e)
         {

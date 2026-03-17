@@ -272,7 +272,7 @@ public class Shift
      * @param str The string to be parsed
      * @return The {@code Shift} value represented by the string argument if valid, otherwise {@code null}
      */
-    public static Shift parseShift(String str)
+    public static Shift parseShift(String str, Collection<Job> validJobs)
     {
         if (str == null) return null;
 
@@ -284,6 +284,11 @@ public class Shift
 
         Job job = Job.parseJob(jobString);
         if (job == null) return null;
+        Job matchingJob = null;
+        for (Job validJob : validJobs)
+            if (validJob.equals(job))
+                matchingJob = validJob;
+        if (matchingJob == null) return null;
 
         String startString = getStringBetweenStringAndComma(str, "Start: ");
         if (startString == null) return null;
@@ -299,7 +304,7 @@ public class Shift
             LocalDateTime start = LocalDateTime.parse(startString);
             LocalDateTime end = LocalDateTime.parse(endString);
             double hourlyWage = Double.parseDouble(wageString);
-            return new Shift(name, job, start, end, hourlyWage);
+            return new Shift(name, matchingJob, start, end, hourlyWage);
         }
         catch (DateTimeParseException | NumberFormatException e)
         {
