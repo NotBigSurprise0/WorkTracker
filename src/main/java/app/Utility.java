@@ -69,6 +69,6 @@ public class Utility
             sb.append(" second");
             if (seconds != 1) sb.append("s");
         }
-        return sb.toString().trim();
+        return sb.toString().strip();
     }
 }

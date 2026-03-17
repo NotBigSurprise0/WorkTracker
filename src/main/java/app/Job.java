@@ -19,7 +19,7 @@ public class Job
     {
         Objects.requireNonNull(name, "Cannot create a job with a null name");
 
-        this.name = name.trim();
+        this.name = name.strip();
         this.hourlyWage = -1;
     }
 
@@ -35,7 +35,7 @@ public class Job
         Objects.requireNonNull(name, "Cannot create a job with a null name");
         if (hourlyWage < 0) throw new IllegalArgumentException("Cannot have an hourly wage that is negative.");
 
-        this.name = name.trim();
+        this.name = name.strip();
         this.hourlyWage = hourlyWage;
     }
 
@@ -69,7 +69,7 @@ public class Job
     {
         if (newName == null) return false;
 
-        this.name = newName.trim();
+        this.name = newName.strip();
         return true;
     }
 
@@ -102,10 +102,10 @@ public class Job
         String[] parts = str.split(":");
         if (parts.length != 2) return null;
 
-        String name = parts[0].trim();
+        String name = parts[0].strip();
         if (name.isBlank()) return null;
 
-        String wageString = parts[1].trim().replace("$", "");
+        String wageString = parts[1].strip().replace("$", "");
         if (wageString.equalsIgnoreCase(UNKNOWN_WAGE_STRING))
             return new Job(name);
 

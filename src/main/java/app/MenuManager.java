@@ -282,7 +282,7 @@ public class MenuManager
         while (job == null || jobExists)
         {
             System.out.print("Enter the name of the job (enter '!' to exit): ");
-            String name = scanner.nextLine().trim();
+            String name = scanner.nextLine().strip();
             if (name.equals("!"))
             {
                 System.out.println("Exiting...");
@@ -313,7 +313,7 @@ public class MenuManager
             }
             else
             {
-                if (scanner.nextLine().trim().equals("!"))
+                if (scanner.nextLine().strip().equals("!"))
                 {
                     System.out.println("Exiting...");
                     return;
@@ -424,7 +424,7 @@ public class MenuManager
         while (time == null)
         {
             System.out.print("Enter the " + name + " in the format 'xx:xx am/pm' Eg. 10:15 pm or even 8:00:20 am (can include seconds) ('!' to exit): ");
-            String result = scanner.nextLine().trim();
+            String result = scanner.nextLine().strip();
             if (result.equals("!"))
             {
                 System.out.println("Exiting...");
@@ -487,12 +487,12 @@ public class MenuManager
                     date = LocalDate.now().minusDays(daysAgo);
                     System.out.println("Date: " + date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")));
                     System.out.print("Is this correct? ('y' for yes, anything else for no): ");
-                    if (!scanner.nextLine().trim().equalsIgnoreCase("Y")) daysAgo = -1;
+                    if (!scanner.nextLine().strip().equalsIgnoreCase("Y")) daysAgo = -1;
                 }
             }
             else
             {
-                if (scanner.nextLine().trim().equals("!"))
+                if (scanner.nextLine().strip().equals("!"))
                 {
                     System.out.println("Exiting...");
                     return null;
@@ -520,7 +520,7 @@ public class MenuManager
         while (date == null)
         {
             System.out.print("Enter the " + name + " in the format 'yyyy-mm-dd' Eg. 2020-05-15 for May 15, 2020 ('!' to exit): ");
-            String result = scanner.nextLine().trim();
+            String result = scanner.nextLine().strip();
             if (result.equals("!"))
             {
                 System.out.println("Exiting...");
@@ -532,7 +532,7 @@ public class MenuManager
                 date = LocalDate.parse(result, DateTimeFormatter.ISO_LOCAL_DATE);
                 System.out.println("Date: " + date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")));
                 System.out.print("Is this correct? ('y' for yes, anything else for no): ");
-                if (!scanner.nextLine().trim().equalsIgnoreCase("Y")) date = null;
+                if (!scanner.nextLine().strip().equalsIgnoreCase("Y")) date = null;
             }
             catch (DateTimeParseException d)
             {
@@ -554,7 +554,7 @@ public class MenuManager
         Objects.requireNonNull(name, "Name cannot be null");
 
         System.out.print("Was the " + name + " recent (you know the number of days since the " + name + ")? ('y' for yes, '!' to exit, anything else no): ");
-        String choice = scanner.nextLine().trim();
+        String choice = scanner.nextLine().strip();
         if (choice.equals("!"))
         {
             System.out.println("Exiting...");
@@ -587,7 +587,7 @@ public class MenuManager
             }
             else
             {
-                String line = scanner.nextLine().trim();
+                String line = scanner.nextLine().strip();
                 if (line.equals("!"))
                 {
                     System.out.println("Exiting...");
@@ -631,7 +631,7 @@ public class MenuManager
             if (duration.isZero())
             {
                 System.out.print("The duration is 0. Are you sure this is what you want? ('y' for yes, anything else for no): ");
-                if (!scanner.nextLine().trim().equalsIgnoreCase("Y")) duration = null;
+                if (!scanner.nextLine().strip().equalsIgnoreCase("Y")) duration = null;
             }
         }
         return duration;
@@ -653,7 +653,7 @@ public class MenuManager
         {
             System.out.println(message + " ('!' to exit)");
             System.out.println("Valid jobs: " + jobNames);
-            String name = scanner.nextLine().trim();
+            String name = scanner.nextLine().strip();
             if (name.equals("!"))
             {
                 System.out.println("Exiting...");
@@ -706,17 +706,17 @@ public class MenuManager
         if (duration == null) return;
 
         System.out.print("This shift is from " + start.format(Shift.DEFAULT_DATETIME_FORMAT) + " to " + start.plus(duration).format(Shift.DEFAULT_DATETIME_FORMAT) + " Is this correct? ('y' for yes, anything else for no): ");
-        if (!scanner.nextLine().trim().equalsIgnoreCase("Y"))
+        if (!scanner.nextLine().strip().equalsIgnoreCase("Y"))
         {
             System.out.println("Exiting...");
             return;
         }
 
         System.out.print("Do you want to name the shift or use a default name ('y' for name, anything else for default): ");
-        if (scanner.nextLine().trim().equalsIgnoreCase("Y"))
+        if (scanner.nextLine().strip().equalsIgnoreCase("Y"))
         {
             System.out.print("Enter the name ('!' to exit): ");
-            String name = scanner.nextLine().trim();
+            String name = scanner.nextLine().strip();
             if (name.equals("!"))
             {
                 System.out.println("Exiting...");
@@ -901,7 +901,7 @@ public class MenuManager
         while (shift == null)
         {
             System.out.print("Enter the name of the shift ('!' to exit): ");
-            String shiftName = scanner.nextLine().trim();
+            String shiftName = scanner.nextLine().strip();
             if (shiftName.isBlank())
             {
                 System.out.println("Shifts cannot have a blank name!");
@@ -945,7 +945,7 @@ public class MenuManager
     private Shift selectShift()
     {
         System.out.print("Do you want to select a shift from a specific job, or from all shifts? ('y' for from a specific job, '!' to exit, anything else for from all shifts): ");
-        String result = scanner.nextLine().trim();
+        String result = scanner.nextLine().strip();
         if (result.equals("!"))
         {
             System.out.println("Exiting...");
@@ -994,7 +994,7 @@ public class MenuManager
         }
 
         System.out.print("Do you know the name of the shift? ('y' for yes, '!' to exit, anything else for no): ");
-        String result = scanner.nextLine().trim();
+        String result = scanner.nextLine().strip();
         if (result.equals("!"))
         {
             System.out.println("Exiting...");
@@ -1043,7 +1043,7 @@ public class MenuManager
 
             shiftBeingRemoved = sortedLoadedShifts.get(choice - 1);
             System.out.print("You selected shift: " + shiftBeingRemoved.display(DisplayMode.Times) + " Is this correct? ('y' for yes, '!' to exit, anything else for no): ");
-            String result = scanner.nextLine().trim();
+            String result = scanner.nextLine().strip();
             if (result.equals("!"))
             {
                 System.out.println("Exiting...");
