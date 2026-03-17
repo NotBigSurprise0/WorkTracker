@@ -10,8 +10,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Objects;
+import java.util.Scanner;
 
 public class WorkTracker
 {
@@ -182,7 +182,7 @@ public class WorkTracker
      * Gets the shifts for a job if the job exists.
      * 
      * @param job The job to get all the shifts for (cannot be {@code null})
-     * @return The list of {@code Shift}s for the job if the job exists, otherwise null
+     * @return The list of {@code Shift}s for the job if the job exists, otherwise {@code null}
      * @throws NullPointerException If {@code job} is {@code null}
      */
     public List<Shift> getShifts(String jobName)
@@ -207,6 +207,24 @@ public class WorkTracker
         for (ArrayList<Shift> jobShifts : this.shifts.values())
             allShifts.addAll(jobShifts);
         return allShifts;
+    }
+
+    /**
+     * Deletes a job based on the given name and all associated shifts.
+     * 
+     * @param jobName The name of the job (cannot be {@code null})
+     * @return {@code true} if a job was removed, otherwise {@code false}
+     * @throws NullPointerException If {@code jobName} is {@code null}
+     */
+    public boolean deleteJob(String jobName)
+    {
+        Objects.requireNonNull(jobName, "Job name cannot be null");
+
+        Job removedJob = this.jobLookUp.remove(jobName.toLowerCase());
+        if (removedJob != null)
+            this.shifts.remove(removedJob);
+
+        return removedJob != null;
     }
 
     /**

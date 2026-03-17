@@ -53,7 +53,8 @@ public class MenuManager
 
     static // Remove Menu
     {
-
+        REMOVE_DATA_MENU.addOption("Delete a job");
+        REMOVE_DATA_MENU.addOption("Delete a shift");
     }
 
     static // Display Menu
@@ -181,6 +182,8 @@ public class MenuManager
         int choice = REMOVE_DATA_MENU.display();
         switch (choice)
         {
+            case 1 -> this.deleteJobMenu();
+            case 2 -> this.deleteShiftMenu();
             default -> {}
         }
         this.save();
@@ -734,6 +737,61 @@ public class MenuManager
             else
                 System.out.println("An error occurred and the shift was not added successfully.");
         }
+    }
+
+    /**
+     * Deletes a job (and all associated shifts) based on user input.
+     */
+    private void deleteJobMenu()
+    {
+        if (this.workTracker.getJobs().isEmpty())
+        {
+            System.out.println("There are no jobs to delete.");
+            return;
+        }
+
+        Job matchingJob = this.getValidJob("Enter the name of the job you want to delete");
+        if (matchingJob == null) return;
+
+        List<Shift> jobShifts = this.workTracker.getShifts(matchingJob.getName());
+        if (jobShifts == null) return;
+
+        int size = jobShifts.size();
+        if (jobShifts.isEmpty()) System.out.print("There are no shifts");
+        else if (size == 1) System.out.print("There is 1 shift");
+        else System.out.print("There are " + size + " shifts");
+        System.out.print(" associated with the selected job. Are you sure you want to delete this job and all associated shifts ('yes' for yes, anything else for no): ");
+        if (!scanner.nextLine().strip().equalsIgnoreCase("Yes"))
+        {
+            System.out.println("Exiting...");
+            return;
+        }
+
+        boolean success = this.workTracker.deleteJob(matchingJob.getName());
+        if (success)
+        {
+            System.out.print("Job: " + matchingJob.getName() + " successfully removed. The job's " + size + " associated shift");
+            if (size != 1) System.out.println("s have also been removed.");
+            else System.out.println(" has also been removed.");
+
+            if (!jobShifts.isEmpty())
+            {
+                int removedCount = 0;
+                for (Shift shift : jobShifts)
+                    if (this.currentShifts.remove(shift))
+                        removedCount++;
+                if (removedCount != 1) System.out.print(removedCount + " shifts were");
+                else System.out.print("1 shift was");
+                System.out.println(" also removed from loaded shifts.");
+            }
+        }
+        else
+            System.out.println("An error occurred and the job was not deleted. Please try again.");
+    }
+
+    private void deleteShiftMenu()
+    {
+
     }
 
     /**
