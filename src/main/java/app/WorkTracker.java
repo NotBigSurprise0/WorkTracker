@@ -216,12 +216,12 @@ public class WorkTracker
      */
     public boolean save()
     {
-        List<Job> jobs = this.getJobs();
+        List<Job> sortedJobs = Job.sortJobsById(this.getJobs());
         List<Shift> sortedShifts = Shift.sortShiftsById(this.getAllShifts());
         String tempPath = this.destinationPath.getParent() + "\\temp.txt";
         try (FileWriter writer = new FileWriter(tempPath))
         {
-            for (Job job : jobs)
+            for (Job job : sortedJobs)
             {
                 writer.write(job.toString());
                 writer.write("\n");

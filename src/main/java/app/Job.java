@@ -1,5 +1,9 @@
 package app;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 public class Job
@@ -90,6 +94,24 @@ public class Job
 
         this.hourlyWage = newRate;
         return true;
+    }
+
+    /**
+     * Returns the given Collection of Jobs sorted by id.
+     * <p>
+     * {@code jobs} is not modified.
+     * 
+     * @param jobs The jobs to sort (not modified) (cannot be {@code null})
+     * @return A {@code List} of {@code Job} that is sorted by id from the given Collection
+     * @throws NullPointerException If {@code jobs} is {@code null}
+     */
+    public static List<Job> sortJobsById(Collection<Job> jobs)
+    {
+        Objects.requireNonNull(jobs, "Jobs cannot be null");
+
+        List<Job> sortedJobs = new ArrayList<>(jobs);
+        sortedJobs.sort(Comparator.comparing((Job j) -> j.id));
+        return sortedJobs;
     }
 
     /**
