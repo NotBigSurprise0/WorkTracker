@@ -89,8 +89,10 @@ public class Job
 
     /**
      * Returns a new {@code Job} initialized to be the value represented by the specified {@code String}.
+     * <p>
+     * The string should be formatted as the result of the toString() method on a Job object.
      * 
-     * @param str THe string to be parsed
+     * @param str The string to be parsed
      * @return The {@code Job} value represented by the string argument if valid, otherwise {@code null}
      */
     public static Job parseJob(String str)
@@ -103,7 +105,7 @@ public class Job
         String name = parts[0].trim();
         if (name.isBlank()) return null;
 
-        String wageString = parts[1].trim();
+        String wageString = parts[1].trim().replace("$", "");
         if (wageString.equalsIgnoreCase(UNKNOWN_WAGE_STRING))
             return new Job(name);
 

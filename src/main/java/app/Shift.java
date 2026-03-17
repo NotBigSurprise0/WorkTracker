@@ -215,6 +215,44 @@ public class Shift
     }
 
     /**
+     * Gets the string starting after the first instance of {@code identifier} in {@code originalString} up until the next comma (excluding the comma) if possible.
+     * 
+     * @param originalString The string to search through
+     * @param identifier The identifier to look for in {@code originalString}
+     * @return The {@code String} if one exists, otherwise {@code null}
+     */
+    private static String getStringBetweenStringAndComma(String originalString, String identifier)
+    {
+        if (originalString == null || identifier == null) return null;
+
+        int identifierIndex = originalString.indexOf(identifier);
+        if (identifierIndex == -1) return null;
+
+        int commaIndex = originalString.indexOf(",", identifierIndex + identifier.length());
+        if (commaIndex != -1)
+            return originalString.substring(identifierIndex + identifier.length(), commaIndex).strip();
+        else
+            return originalString.substring(identifierIndex + identifier.length()).strip();
+    }
+
+    /**
+     * Returns a new {@code Shift} initialized to be the value represented by the specified {@code String}.
+     * <p>
+     * The string should be formatted as the result of the toString() method on a Shift object.
+     * 
+     * @param str The string to be parsed
+     * @return The {@code Shift} value represented by the string argument if valid, otherwise {@code null}
+     */
+    public static Shift parseShift(String str)
+    {
+        if (str == null) return null;
+
+        String name = getStringBetweenStringAndComma(str, "Name: ");
+        if (name == null) return null;
+
+    }
+
+    /**
      * Displays all the fields for the {@code Shift}.
      * 
      * @return The string containing the fields of the {@code Shift} in a readable format
