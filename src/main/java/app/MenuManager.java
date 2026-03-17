@@ -55,6 +55,7 @@ public class MenuManager
     {
         REMOVE_DATA_MENU.addOption("Delete a job");
         REMOVE_DATA_MENU.addOption("Delete a shift");
+        REMOVE_DATA_MENU.addOption("Delete all jobs and shifts");
     }
 
     static // Display Menu
@@ -184,6 +185,7 @@ public class MenuManager
         {
             case 1 -> this.deleteJobMenu();
             case 2 -> this.deleteShiftMenu();
+            case 3 -> this.deleteAllJobsAndShiftsMenu();
             default -> {}
         }
         this.save();
@@ -832,6 +834,38 @@ public class MenuManager
         }
         else
             System.out.println("An error occurred deleting the shift and it was not deleted. Please try again.");
+    }
+
+    /**
+     * Deletes all jobs and shifts based on user input.
+     */
+    private void deleteAllJobsAndShiftsMenu()
+    {
+        int jobCount = this.workTracker.getJobs().size();
+        int shiftCount = this.workTracker.getAllShifts().size();
+        System.out.print("Are you sure you want to delete everything? ");
+        if (jobCount == 1) System.out.print("There is 1 job and ");
+        else System.out.print("There are " + jobCount + " jobs and ");
+        if (shiftCount == 1) System.out.print("1 shift ");
+        else System.out.print(shiftCount + " shifts ");
+        System.out.print("which will all be deleted ('yes' for yes, anything else for no): ");
+        if (!scanner.nextLine().strip().equalsIgnoreCase("Yes"))
+        {
+            System.out.println("Exiting...");
+            return;
+        }
+
+        String required = "I am sure I want to delete everything and I know it cannot be undone.";
+        System.out.println("Enter the following (exactly) to delete everything: " + required);
+        if (!scanner.nextLine().strip().equals(required))
+        {
+            System.out.println("You did not enter the exact string. Exiting...");
+            return;
+        }
+
+        this.workTracker.reset();
+        this.currentShifts.clear();
+        System.out.println("All jobs and shifts have now been deleted.");
     }
 
     /**

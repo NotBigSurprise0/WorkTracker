@@ -245,6 +245,15 @@ public class WorkTracker
     }
 
     /**
+     * Resets (clears) all jobs and shifts. Cannot be undone.
+     */
+    public void reset()
+    {
+        this.jobLookUp.clear();
+        this.shifts.clear();
+    }
+
+    /**
      * Saves job and shift data to the file being tracked.
      * 
      * @return {@code true} If the data was saved successfully, otherwise {@code false}
