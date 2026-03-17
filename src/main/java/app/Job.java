@@ -6,8 +6,11 @@ public class Job
 {
     private static final String UNKNOWN_WAGE_STRING = "Unknwon wage";
 
+    private static int nextId = 1;
+
     private String name;
     private double hourlyWage;
+    private final int id;
 
     /**
      * Creates a job with the given name and an unspecified hourly wage.
@@ -21,6 +24,7 @@ public class Job
 
         this.name = name.strip();
         this.hourlyWage = -1;
+        this.id = Job.nextId++;
     }
 
     /**
@@ -37,6 +41,7 @@ public class Job
 
         this.name = name.strip();
         this.hourlyWage = hourlyWage;
+        this.id = Job.nextId++;
     }
 
     /**
@@ -143,6 +148,6 @@ public class Job
     @Override
     public int hashCode()
     {
-        return name.hashCode();
+        return this.id;
     }
 }

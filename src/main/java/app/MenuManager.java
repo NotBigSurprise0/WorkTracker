@@ -295,7 +295,7 @@ public class MenuManager
             }
             
             job = new Job(name);
-            jobExists = workTracker.jobExists(job);
+            jobExists = workTracker.jobExists(name);
             if (jobExists) System.out.println("That job already exists!");
         }
         double wage = -2;
@@ -660,16 +660,11 @@ public class MenuManager
                 return null;
             }
 
-            Job job = new Job(name);
-            jobExists = workTracker.jobExists(job);
+            jobExists = workTracker.jobExists(name);
             if (!jobExists)
-            {
                 System.out.println("Invalid job! That was not an option.");
-            }
             else
-            {
-                matchingJob = workTracker.getMatchingJob(job);
-            }
+                matchingJob = workTracker.getMatchingJob(name);
         }
         return matchingJob;
     }
@@ -791,7 +786,7 @@ public class MenuManager
         Job validJob = this.getValidJob("Enter the job to show shifts from");
         if (validJob == null) return;
 
-        List<Shift> shifts = this.workTracker.getShifts(validJob);
+        List<Shift> shifts = this.workTracker.getShifts(validJob.getName());
         if (shifts.isEmpty())
         {
             System.out.println("The job (" + validJob.getName() + ") does not have any shifts. Have you tried adding a shift?");
@@ -854,7 +849,7 @@ public class MenuManager
         if (validJob == null) return;
 
         int currentSize = this.currentShifts.size();
-        List<Shift> shifts = this.workTracker.getShifts(validJob);
+        List<Shift> shifts = this.workTracker.getShifts(validJob.getName());
         this.currentShifts.addAll(shifts);
         int newSize = this.currentShifts.size();
         int newElements = newSize - currentSize;
@@ -958,7 +953,7 @@ public class MenuManager
             Job job = getValidJob("Enter the job to get shifts from");
             if (job == null) return null;
 
-            shiftOptions = this.workTracker.getShifts(job);
+            shiftOptions = this.workTracker.getShifts(job.getName());
             if (shiftOptions.isEmpty())
             {
                 System.out.println("There are no shifts for that job. Exiting...");

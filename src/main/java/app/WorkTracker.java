@@ -16,9 +16,9 @@ import java.util.Objects;
 public class WorkTracker
 {
     /**
-     * Binds jobs with names in lowercase to the job with the name in the first given case like "abc" binds to "ABc" if the user first enter "ABc" as the job name.
+     * Binds Strings of job names in lowercase to the job with the name in the first given case like "abc" binds to "ABc" if the user first enter "ABc" as the job name.
      */
-    private HashMap<Job, Job> jobLookUp;
+    private HashMap<String, Job> jobLookUp;
     private HashMap<Job, ArrayList<Shift>> shifts;
     private Path destinationPath;
 
@@ -52,8 +52,7 @@ public class WorkTracker
                 if (collectingJobs)
                 {
                     Job job = Job.parseJob(line);
-                    Job lowercaseJob = new Job(job.getName().toLowerCase(), job.getCurrentHourlyWage());
-                    this.jobLookUp.put(lowercaseJob, job);
+                    this.jobLookUp.put(job.getName().toLowerCase(), job);
                 }
                 else
                 {
@@ -80,7 +79,7 @@ public class WorkTracker
      */
     public WorkTracker(File file) throws IOException, NullPointerException, IllegalArgumentException
     {
-        if (file == null) throw new NullPointerException("File cannot be null");
+        Objects.requireNonNull(file, "File cannot be null");
 
         this.destinationPath = Paths.get(file.getPath());
         if (!file.exists())
@@ -107,27 +106,28 @@ public class WorkTracker
     /**
      * Gets the matching recorded job with the name in whatever case the user provided if that exists.
      * 
-     * @param job The job to look for a matching job (cannot be {@code null})
+     * @param jobName The job name to look for a matching job (cannot be {@code null})
      * @return The matching {@code Job} if one exists, otherwise {@code null}
      */
-    public Job getMatchingJob(Job job)
+    public Job getMatchingJob(String jobName)
     {
-        if (job == null) throw new NullPointerException("Job cannot be null.");
+        Objects.requireNonNull(jobName, "Job cannot be null");
 
-        Job jobWithLowercaseName = new Job(job.getName().toLowerCase());
-        return this.jobLookUp.get(jobWithLowercaseName);
+        return this.jobLookUp.get(jobName.toLowerCase());
     }
 
     /**
-     * Determines if the job exists in the set of jobs.
+     * Determines if the job name exists in the set of jobs.
      * 
-     * @param job The job to check (cannot be {@code null})
+     * @param jobName The job name to check (cannot be {@code null})
      * @return {@code true} if {@code job} exists in the set of jobs, otherwise {@code false}
      * @throws NullPointerException If {@code job} is {@code null}
      */
-    public boolean jobExists(Job job)
+    public boolean jobExists(String jobName)
     {
-        return this.getMatchingJob(job) != null;
+        Objects.requireNonNull(jobName, "Job name cannot be null");
+
+        return this.getMatchingJob(jobName) != null;
     }
 
     /**
@@ -139,11 +139,11 @@ public class WorkTracker
      */
     public boolean addJob(Job job)
     {
-        if (job == null) throw new NullPointerException("Job cannot be null.");
+        Objects.requireNonNull(job, "Job cannot be null");
 
-        if (this.jobExists(job)) return false;
+        if (this.jobExists(job.getName())) return false;
 
-        this.jobLookUp.put(new Job(job.getName().toLowerCase()), job);
+        this.jobLookUp.put(job.getName().toLowerCase(), job);
         this.shifts.put(job, new ArrayList<>());
         return true;
     }
@@ -157,10 +157,10 @@ public class WorkTracker
      */
     public boolean addShift(Shift shift)
     {
-        if (shift == null) throw new NullPointerException("Shift cannot be null.");
+        Objects.requireNonNull(shift, "Shift cannot be null");
 
         Job job = shift.getJob();
-        Job matchingJob = this.getMatchingJob(job);
+        Job matchingJob = this.getMatchingJob(job.getName());
         if (matchingJob == null) return false;
 
         ArrayList<Shift> jobShifts = this.shifts.get(matchingJob);
@@ -185,11 +185,11 @@ public class WorkTracker
      * @return The list of {@code Shift}s for the job if the job exists, otherwise null
      * @throws NullPointerException If {@code job} is {@code null}
      */
-    public List<Shift> getShifts(Job job)
+    public List<Shift> getShifts(String jobName)
     {
-        if (job == null) throw new NullPointerException("Job cannot be null.");
+        Objects.requireNonNull(jobName, "Job name cannot be null");
 
-        Job matchingJob = this.getMatchingJob(job);
+        Job matchingJob = this.getMatchingJob(jobName);
         if (matchingJob == null) return null;
 
         List<Shift> jobShifts = this.shifts.get(matchingJob);
@@ -204,11 +204,8 @@ public class WorkTracker
     public List<Shift> getAllShifts()
     {
         List<Shift> allShifts = new ArrayList<>();
-        for (Job job : this.jobLookUp.values())
-        {
-            List<Shift> jobShifts = this.getShifts(job);
+        for (ArrayList<Shift> jobShifts : this.shifts.values())
             allShifts.addAll(jobShifts);
-        }
         return allShifts;
     }
 
