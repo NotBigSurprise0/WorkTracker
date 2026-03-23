@@ -53,11 +53,11 @@ public class WorkTracker
                 {
                     Job job = Job.parseJob(line);
                     this.jobLookUp.put(job.getName().toLowerCase(), job);
+                    this.shifts.put(job, new ArrayList<>());
                 }
                 else
                 {
                     Shift shift = Shift.parseShift(line, this.jobLookUp.values());
-                    this.shifts.putIfAbsent(shift.getJob(), new ArrayList<>());
                     this.shifts.get(shift.getJob()).add(shift);
                 }
             }
@@ -113,7 +113,19 @@ public class WorkTracker
     {
         Objects.requireNonNull(jobName, "Job cannot be null");
 
-        return this.jobLookUp.get(jobName.toLowerCase());
+        Job jobFromFullName = this.jobLookUp.get(jobName.toLowerCase());
+        if (jobFromFullName != null) return jobFromFullName;
+
+        Job jobFromShortName = null;
+        for (String lowercaseName : jobLookUp.keySet())
+        {
+            if (lowercaseName.startsWith(jobName.toLowerCase()))
+            {
+                if (jobFromShortName == null) jobFromShortName = jobLookUp.get(lowercaseName);
+                else return null; // Multiple possible choices Eg. (jobs: "Board", "Boston" if jobName is "bo", there are 2 options)
+            }
+        }
+        return jobFromShortName;
     }
 
     /**

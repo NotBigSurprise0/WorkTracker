@@ -656,7 +656,7 @@ public class MenuManager
         boolean jobExists = false;
         while (matchingJob == null || !jobExists)
         {
-            System.out.println(message + " ('!' to exit)");
+            System.out.println(message + ". You can enter the first few letters in the job name as long as it is unique ('!' to exit)");
             System.out.println("Valid jobs: " + jobNames);
             String name = scanner.nextLine().strip();
             if (name.equals("!"))
@@ -671,6 +671,7 @@ public class MenuManager
             else
                 matchingJob = workTracker.getMatchingJob(name);
         }
+        System.out.println("Chosen: " + matchingJob.getName());
         return matchingJob;
     }
 

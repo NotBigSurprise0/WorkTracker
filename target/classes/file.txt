@@ -1,6 +1,7 @@
-CBA: $22.00
 Tutoring: $19.50
+CBA Coaching: $22.00
 
-Shift (1) - Name: Unnamed - 1, Job: CBA: $22.00, Start: 2026-03-14T15:00, End: 2026-03-14T16:30, Duration: PT1H30M, Hourly wage: 22.0
+Shift (1) - Name: Unnamed - 1, Job: Tutoring: $19.50, Start: 2026-03-05T17:30, End: 2026-03-05T20:30, Duration: PT3H, Hourly wage: 19.5
 Shift (2) - Name: Unnamed - 2, Job: Tutoring: $19.50, Start: 2026-03-10T17:30, End: 2026-03-10T20:00, Duration: PT2H30M, Hourly wage: 19.5
-Shift (3) - Name: Unnamed - 3, Job: CBA: $22.00, Start: 2026-02-01T11:00, End: 2026-02-01T12:30, Duration: PT1H30M, Hourly wage: 22.0
+Shift (3) - Name: Unnamed - 3, Job: CBA Coaching: $22.00, Start: 2026-03-14T15:00, End: 2026-03-14T16:30, Duration: PT1H30M, Hourly wage: 22.0
+Shift (4) - Name: Unnamed - 4, Job: Tutoring: $19.50, Start: 2026-03-17T17:30, End: 2026-03-17T20:00, Duration: PT2H30M, Hourly wage: 19.5
