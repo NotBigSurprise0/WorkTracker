@@ -62,7 +62,7 @@ public class Utility
             sb.append(" minute");
             if (minutes != 1) sb.append("s");
         }
-        if (seconds != 0)
+        if (seconds != 0 || (days == 0 && hours == 0 && minutes == 0))
         {
             sb.append(" ");
             sb.append(seconds);
