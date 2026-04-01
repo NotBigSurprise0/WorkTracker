@@ -246,7 +246,53 @@ public class MenuManager
      */
     public void filterShiftsMenu()
     {
+        if (this.currentShifts.isEmpty())
+        {
+            System.out.println("There are currently no loaded shifts. Have you tried loading shifts or changing your filter?");
+            return;
+        }
 
+        System.out.print("Do you want to filter shifts (only include) starting after a date inclusive ('a') or before a date inclusive ('b') (anything else to exit): ");
+        String choice = scanner.nextLine().strip();
+        boolean filterAfter;
+        if (choice.equalsIgnoreCase("a")) filterAfter = true;
+        else if (choice.equalsIgnoreCase("b")) filterAfter = false;
+        else
+        {
+            System.out.println("Exiting...");
+            return;
+        }
+
+        String directionString = filterAfter ? "after" : "before";
+        LocalDate date = getDateFromDateString("date you want to filter loaded shifts " + directionString);
+        if (date == null) return;
+
+        LocalDateTime finalDateTime;
+        System.out.print("Do you want to specify a time ('y' for yes, anything else for no): ");
+        boolean specifyingTime = scanner.nextLine().strip().equalsIgnoreCase("y");
+        if (!specifyingTime)
+        {
+            finalDateTime = date.atTime(0, 0);
+        }
+        else
+        {
+            LocalTime time = getTime("time you want to filter loaded shifts " + directionString);
+            if (time == null) return;
+
+            finalDateTime = date.atTime(time);
+        }
+
+        int originalSize = this.currentShifts.size();
+        if (filterAfter)
+            this.currentShifts.removeIf(shift -> shift.getStart().isBefore(finalDateTime));
+        else
+            this.currentShifts.removeIf(shift -> shift.getStart().isAfter(finalDateTime));
+        int newSize = this.currentShifts.size();
+        int change = Math.abs(newSize - originalSize);
+        System.out.print(change + " shift");
+        if (change != 1) System.out.print("s were");
+        else System.out.print(" was");
+        System.out.println(" filtered out based on your filter.");
     }
 
     /**

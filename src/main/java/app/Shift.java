@@ -259,7 +259,7 @@ public class Shift
         Objects.requireNonNull(shifts, "Shifts cannot be null");
 
         List<Shift> sortedShifts = new ArrayList<>(shifts);
-        sortedShifts.sort(Comparator.comparing((Shift s) -> s.id));
+        sortedShifts.sort(Comparator.comparing(shift -> shift.id));
         return sortedShifts;
     }
 
