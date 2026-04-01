@@ -66,7 +66,6 @@ public class WorkTracker
                 throw new IllegalArgumentException("Line " + lineNumber + " of " + filePath + " is incorrectly formatted: " + e.getMessage());
             }
         }
-        System.out.println("Existing data loaded successfully.");
     }
 
     /**
@@ -86,6 +85,7 @@ public class WorkTracker
         {
             this.jobLookUp = new HashMap<>();
             this.shifts = new HashMap<>();
+            System.out.println("File does not exist. Data will be saved to a newly created file with that name.");
             return;
         }
 
@@ -95,6 +95,7 @@ public class WorkTracker
             this.shifts = new HashMap<>();
 
             initFieldsFromFile(scanner, file.getPath());
+            System.out.println("Existing data loaded successfully.");
         }
         catch (IOException e)
         {
