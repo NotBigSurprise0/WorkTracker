@@ -30,7 +30,7 @@ public class WorkTracker
      * @throws NullPointerException If {@code scanner} or {@code filePath} is {@code null}
      * @throws IllegalArgumentException If the file being read is incorrectly formatted
      */
-    private void initFieldsFromFile(Scanner scanner, String filePath) throws IllegalArgumentException
+    private void initFieldsFromFile(Scanner scanner, String filePath)
     {
         Objects.requireNonNull(scanner, "Scanner cannot be null");
         Objects.requireNonNull(filePath, "File path cannot be null");
@@ -77,7 +77,7 @@ public class WorkTracker
      * @throws NullPointerException If {@code file} is {@code null}
      * @throws IllegalArgumentException If the file given exists and is formatted incorrectly
      */
-    public WorkTracker(File file) throws IOException, NullPointerException, IllegalArgumentException
+    public WorkTracker(File file) throws IOException
     {
         Objects.requireNonNull(file, "File cannot be null");
 
