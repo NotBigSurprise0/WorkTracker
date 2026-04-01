@@ -370,6 +370,15 @@ public class MenuManager
 
     /**
      * Handles the copy to clipboard menu. Does not repeat.
+     * <p>
+     * Copies loaded shift data to paste into an excel sheet. It assumes the first column is the shift date and the second column is the hours worked.
+     * <p>
+     * Eg.
+     * Session Date,Hours
+     * <p>
+     * March 15,2
+     * <p>
+     * September 1,5.5
      */
     public void copyToClipboardMenu()
     {
