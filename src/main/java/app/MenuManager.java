@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -242,6 +243,105 @@ public class MenuManager
     }
 
     /**
+     * Filters loaded shifts based off of user input (user enters a date).
+     * <p>
+     * The user enters a month (and a year technically) and all Shifts in loaded shifts that do not start in that month are removed from loaded shifts.
+     * 
+     * @return {@code true} if the filter was successfully applied, otherwise {@code false}
+     */
+    private boolean filterLoadedShiftsFromMonth()
+    {
+        System.out.print("Is the month you want to filter for this year ('y' for yes, anything else for no): ");
+        boolean thisYear = scanner.nextLine().strip().equalsIgnoreCase("Y");
+        int year;
+        if (thisYear)
+            year = LocalDateTime.now().getYear();
+        else
+        {
+            Integer result = getNonNegativeInteger("Enter the year: ");
+            if (result == null) return false;
+
+            year = result;
+        }
+
+        Month month = null;
+        while (month == null)
+        {
+            System.out.print("Enter the month you want to filter loaded shifts for ('!' to exit): ");
+            String monthName = scanner.nextLine().strip().toUpperCase();
+            if (monthName.equals("!"))
+            {
+                System.out.println("Exiting...");
+                return false;
+            }
+
+            try
+            {
+                month = Month.valueOf(monthName);
+            }
+            catch (IllegalArgumentException e)
+            {
+                System.out.println("Invalid month.");
+            }
+        }
+        final Month finalMonth = month;
+        this.currentShifts.removeIf(shift -> shift.getStart().getYear() != year);
+        this.currentShifts.removeIf(shift -> shift.getStart().getMonth() != finalMonth);
+        System.out.println("Filter: only include shifts starting in " + month.name().charAt(0) + month.name().substring(1).toLowerCase() + " of " + year);
+        return true;
+    }
+
+    /**
+     * Filters loaded shifts based off of user input (user enters a date).
+     * <p>
+     * The user enters a date and whether they want to filter before or after the date and every Shift in loaded shifts not matching will be removed from loaded shifts.
+     * 
+     * @return {@code true} if a filter was successfully applied, otherwise {@code false}
+     */
+    private boolean filterLoadedShiftsFromDate()
+    {
+        System.out.print("Do you want to filter shifts (only include) starting after a date inclusive ('a') or before a date inclusive ('b') (anything else to exit): ");
+        String choice = scanner.nextLine().strip();
+        boolean filterAfter;
+        if (choice.equalsIgnoreCase("a")) filterAfter = true;
+        else if (choice.equalsIgnoreCase("b")) filterAfter = false;
+        else
+        {
+            System.out.println("Exiting...");
+            return false;
+        }
+
+        String directionString = filterAfter ? "after" : "before";
+        LocalDate date = getDateFromDateString("date you want to filter loaded shifts " + directionString);
+        if (date == null) return false;
+
+        LocalDateTime finalDateTime;
+        System.out.print("Do you want to specify a time ('y' for yes, anything else for no): ");
+        boolean specifyingTime = scanner.nextLine().strip().equalsIgnoreCase("y");
+        if (!specifyingTime)
+            finalDateTime = date.atTime(0, 0);
+        else
+        {
+            LocalTime time = getTime("time you want to filter loaded shifts " + directionString);
+            if (time == null) return false;
+
+            finalDateTime = date.atTime(time);
+        }
+
+        if (filterAfter)
+        {
+            this.currentShifts.removeIf(shift -> shift.getStart().isBefore(finalDateTime));
+            System.out.println("Filter: only include shifts starting after and including " + finalDateTime.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy 'at' h:mm a")));
+        }
+        else
+        {
+            this.currentShifts.removeIf(shift -> shift.getStart().isAfter(finalDateTime));
+            System.out.println("Filter: only include shifts starting before and including " + finalDateTime.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy 'at' h:mm a")));
+        }
+        return true;
+    }
+
+    /**
      * Handles filtering loaded shifts. Does not repeat.
      */
     public void filterShiftsMenu()
@@ -252,41 +352,14 @@ public class MenuManager
             return;
         }
 
-        System.out.print("Do you want to filter shifts (only include) starting after a date inclusive ('a') or before a date inclusive ('b') (anything else to exit): ");
-        String choice = scanner.nextLine().strip();
-        boolean filterAfter;
-        if (choice.equalsIgnoreCase("a")) filterAfter = true;
-        else if (choice.equalsIgnoreCase("b")) filterAfter = false;
-        else
-        {
-            System.out.println("Exiting...");
-            return;
-        }
-
-        String directionString = filterAfter ? "after" : "before";
-        LocalDate date = getDateFromDateString("date you want to filter loaded shifts " + directionString);
-        if (date == null) return;
-
-        LocalDateTime finalDateTime;
-        System.out.print("Do you want to specify a time ('y' for yes, anything else for no): ");
-        boolean specifyingTime = scanner.nextLine().strip().equalsIgnoreCase("y");
-        if (!specifyingTime)
-        {
-            finalDateTime = date.atTime(0, 0);
-        }
-        else
-        {
-            LocalTime time = getTime("time you want to filter loaded shifts " + directionString);
-            if (time == null) return;
-
-            finalDateTime = date.atTime(time);
-        }
-
+        System.out.print("Do you want to filter by a specific month ('m') or before/after a specific date (anything else): ");
+        boolean filterByMonth = scanner.nextLine().strip().equalsIgnoreCase("m");
         int originalSize = this.currentShifts.size();
-        if (filterAfter)
-            this.currentShifts.removeIf(shift -> shift.getStart().isBefore(finalDateTime));
-        else
-            this.currentShifts.removeIf(shift -> shift.getStart().isAfter(finalDateTime));
+        boolean success;
+        if (filterByMonth) success = filterLoadedShiftsFromMonth();
+        else success = filterLoadedShiftsFromDate();
+        if (!success) return;
+
         int newSize = this.currentShifts.size();
         int change = Math.abs(newSize - originalSize);
         System.out.print(change + " shift");
