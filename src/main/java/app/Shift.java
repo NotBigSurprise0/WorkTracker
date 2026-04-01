@@ -164,6 +164,26 @@ public class Shift
     }
 
     /**
+     * Gets the start for the {@Code Shift}.
+     * 
+     * @return The {@code LocalDateTime} of the start of the {@code Shift}
+     */
+    public LocalDateTime getStart()
+    {
+        return this.start;
+    }
+
+    /**
+     * Gets the duration of this {@code Shift}.
+     * 
+     * @return The {@code Duration} of this {@code Shift}
+     */
+    public Duration getDuration()
+    {
+        return this.duration;
+    }
+
+    /**
      * Gets the total duration of a collection of {@code Shift}s.
      * 
      * @param shifts The Collection of Shifts to get the total duration (cannot be {@code null})

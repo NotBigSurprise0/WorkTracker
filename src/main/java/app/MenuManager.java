@@ -1,5 +1,10 @@
 package app;
 
+import java.awt.AWTError;
+import java.awt.HeadlessException;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
@@ -73,6 +78,8 @@ public class MenuManager
         SHIFT_DATA_MENU.addOption("Remove shift from loaded shifts");
         SHIFT_DATA_MENU.addOption("Clear loaded shifts");
         SHIFT_DATA_MENU.addOption("Show loaded shifts");
+        SHIFT_DATA_MENU.addOption("Copy loaded shift data to clipbaord");
+        SHIFT_DATA_MENU.addOption("Filter loaded shifts");
         SHIFT_DATA_MENU.addOption("Get statistic from loaded shifts");
     }
 
@@ -225,10 +232,60 @@ public class MenuManager
                 case 4 -> this.removeSpecificShiftMenu();
                 case 5 -> this.clearCurrentShiftsMenu();
                 case 6 -> this.showCurrentShiftsMenu();
-                case 7 -> this.shiftStatisticsMenu();
+                case 7 -> this.copyToClipboardMenu();
+                case 8 -> this.filterShiftsMenu();
+                case 9 -> this.shiftStatisticsMenu();
                 default -> {}
             }
             pause(choice);
+        }
+    }
+
+    /**
+     * Handles filtering loaded shifts. Does not repeat.
+     */
+    public void filterShiftsMenu()
+    {
+
+    }
+
+    /**
+     * Handles the copy to clipboard menu. Does not repeat.
+     */
+    public void copyToClipboardMenu()
+    {
+        if (this.currentShifts.isEmpty())
+        {
+            System.out.println("There are currently no loaded shifts. Have you tried loading shifts or changing your filter?");
+            return;
+        }
+
+        List<Shift> sortedShifts = new ArrayList<>(this.currentShifts);
+        sortedShifts.sort(Comparator.comparing(Shift::getStart));
+        StringBuilder sb = new StringBuilder();
+        for (Shift shift : sortedShifts)
+        {
+            LocalDateTime start = shift.getStart();
+            sb.append(start.getMonth().name());
+            sb.append(" ");
+            sb.append(start.getDayOfMonth());
+            sb.append("\t");
+            Duration duration = shift.getDuration();
+            double durationInHours = duration.toSeconds() / 3600d;
+            sb.append(String.format("%.2f", durationInHours));
+            sb.append("\n");
+        }
+        String copyString = sb.toString();
+        StringSelection selection = new StringSelection(copyString);
+        try
+        {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(selection, null);
+            System.out.println("Data copied successfully.");
+        }
+        catch (AWTError | HeadlessException | IllegalStateException e)
+        {
+            System.out.println("An error occurred and the data was not copied.");
         }
     }
 
