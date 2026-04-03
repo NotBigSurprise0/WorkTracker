@@ -161,7 +161,7 @@ public class Menu
         if (minChoice > size) throw new IllegalStateException("Cannot select an option when no options available.");
 
         int choice = -1;
-        while (choice < minChoice || choice > size)
+        while (choice == -1)
         {
             if (!this.header.equals("")) System.out.println(this.header);
 
@@ -173,18 +173,14 @@ public class Menu
             System.out.println("0: Exit");
             System.out.println();
             System.out.print("Choice: ");
-            if (scanner.hasNextInt())
+            String choiceAsString = scanner.nextLine().strip();
+            if (!Utility.isIntegerInBounds(choiceAsString, minChoice, size))
             {
-                choice = scanner.nextInt();
-                scanner.nextLine();
-                if (choice < minChoice || choice > size)
-                    System.out.println("Invalid choice. Must be one of the options " + minChoice + "-" + size + "\n");
+                System.out.println("Invalid choice. Must be one of the options " + minChoice + "-" + size + "\n");
+                continue;
             }
-            else
-            {
-                System.out.println("That is not a number.\n");
-                scanner.nextLine();
-            }
+
+            choice = Integer.parseInt(choiceAsString);
         }
         return choice;
     }

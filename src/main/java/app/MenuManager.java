@@ -521,28 +521,6 @@ public class MenuManager
     }
 
     /**
-     * Determines if a string represents an integer value and is not negative.
-     * 
-     * @param str The String to check (cannot be {@code null})
-     * @return {@code true} if {@code str} can be converted to an integer and is not negative, otherwise {@code false}
-     * @throws NullPointerException If {@code str} is {@code null}
-     */
-    private static boolean isNonNegativeInteger(String str)
-    {
-        Objects.requireNonNull(str, "str cannot be null");
-
-        try
-        {
-            int num = Integer.parseInt(str);
-            return num >= 0;
-        }
-        catch (NumberFormatException n)
-        {
-            return false;
-        }
-    }
-
-    /**
      * Gets the hours, minutes, and seconds in 24-hour time of a time based on the parts of a time formatted as 'xx:yy:zz' and if it is am or pm.
      * <p>
      * Displays error messages if the time could not be converted into hours, minutes, and seconds
@@ -553,7 +531,7 @@ public class MenuManager
      */
     private static Integer[] getHoursMinutesSecondsFromTimeParts(String[] parts, boolean isPm)
     {
-        if (!isNonNegativeInteger(parts[0]))
+        if (!Utility.isIntegerAtLeast(parts[0], 0))
         {
             System.out.println("Invalid time. The hours part is not a valid number.");
             return null;
@@ -568,7 +546,7 @@ public class MenuManager
         if (hours == 12 && !isPm) hours = 0;
         else if (hours < 12 && isPm) hours += 12;
 
-        if (!isNonNegativeInteger(parts[1]))
+        if (!Utility.isIntegerAtLeast(parts[1], 0))
         {
             System.out.println("Invalid time. The minutes part is not a valid number.");
             return null;
@@ -583,7 +561,7 @@ public class MenuManager
         int seconds = 0;
         if (parts.length == 3)
         {
-            if (!isNonNegativeInteger(parts[2]))
+            if (!Utility.isIntegerAtLeast(parts[2], 0))
             {
                 System.out.println("Invalid time. Seconds part is not a valid number.");
                 return null;
@@ -665,30 +643,24 @@ public class MenuManager
         while (daysAgo < 0)
         {
             System.out.print("Enter the number of days ago the " + name + " was (0 for today, '!' to exit): ");
-            if (scanner.hasNextInt())
+            String daysAgoString = scanner.nextLine().strip();
+            if (daysAgoString.equals("!"))
             {
-                daysAgo = scanner.nextInt();
-                scanner.nextLine();
-                if (daysAgo < 0)
-                    System.out.println("Negative days ago??? Come on man, be normal.");
-                else
-                {
-                    date = LocalDate.now().minusDays(daysAgo);
-                    System.out.println("Date: " + date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")));
-                    System.out.print("Is this correct? ('y' for yes, anything else for no): ");
-                    if (!scanner.nextLine().strip().equalsIgnoreCase("Y")) daysAgo = -1;
-                }
+                System.out.println("Exiting...");
+                return null;
             }
-            else
-            {
-                if (scanner.nextLine().strip().equals("!"))
-                {
-                    System.out.println("Exiting...");
-                    return null;
-                }
 
-                System.out.println("That is not a number man.");
+            if (!Utility.isIntegerAtLeast(daysAgoString, 0))
+            {
+                System.out.println("Invalid choice. Must be an integer greater than or equal to 0.");
+                continue;
             }
+
+            daysAgo = Integer.parseInt(daysAgoString);
+            date = LocalDate.now().minusDays(daysAgo);
+            System.out.println("Date: " + date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")));
+            System.out.print("Is this correct? ('y' for yes, anything else for no): ");
+            if (!scanner.nextLine().strip().equalsIgnoreCase("Y")) daysAgo = -1;
         }
 
         return date;
@@ -768,25 +740,26 @@ public class MenuManager
         while (num < 0)
         {
             System.out.print(message);
-            if (scanner.hasNextInt())
+            String numString = scanner.nextLine().strip();
+            if (numString.equals("!"))
             {
-                num = scanner.nextInt();
-                scanner.nextLine();
-                if (num < 0) System.out.println("Number cannot be negative!");
+                System.out.println("Exiting...");
+                return null;
             }
-            else
+
+            if (numString.isBlank())
             {
-                String line = scanner.nextLine().strip();
-                if (line.equals("!"))
-                {
-                    System.out.println("Exiting...");
-                    return null;
-                }
-                else if (line.isBlank())
-                    num = 0;
-                else
-                    System.out.println("That is not a number!");
+                num = 0;
+                continue;
             }
+
+            if (!Utility.isIntegerAtLeast(numString, 0))
+            {
+                System.out.println("Invalid option. Must be an integer greater than or equal to 0.");
+                continue;
+            }
+
+            num = Integer.valueOf(numString);
         }
         return num;
     }
