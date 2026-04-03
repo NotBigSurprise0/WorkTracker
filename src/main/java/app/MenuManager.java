@@ -5,7 +5,6 @@ import java.awt.HeadlessException;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -91,18 +90,18 @@ public class MenuManager
     }
 
     /**
-     * Creates a new MenuManager, managing the given file.
+     * Creates a new MenuManager. This creates a WorkTracker using the given path.
      * 
-     * @param file The file to manage
-     * @throws IOException If an error occurrs with the file
-     * @throws NullPointerException If {@code file} is {@code null}
+     * @param path The path of the file to manage (does not have to actually exist) (cannot be {@code null})
+     * @throws IOException If an error occurrs with opening the file that exists at the given path
+     * @throws NullPointerException If {@code path} is {@code null}
      */
-    public MenuManager(File file) throws IOException
+    public MenuManager(String path) throws IOException
     {
-        Objects.requireNonNull(file, "File cannot be null");
+        Objects.requireNonNull(path, "Path cannot be null");
 
         this.currentShifts = new HashSet<>();
-        this.workTracker = new WorkTracker(file);
+        this.workTracker = new WorkTracker(path);
     }
 
     /**

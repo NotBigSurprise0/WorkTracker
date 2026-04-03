@@ -69,18 +69,19 @@ public class WorkTracker
     }
 
     /**
-     * Initializes jobs and shifts from the given file.
+     * Initializes the tracker to save and load from the given path.
      * 
-     * @param file The file to read from to get job and shift data or to create if one doesn't exist (cannot be {@code null})
-     * @throws IOException If an error occurrs with the file.
-     * @throws NullPointerException If {@code file} is {@code null}
-     * @throws IllegalArgumentException If the file given exists and is formatted incorrectly
+     * @param path The path to save and load data from (if a file exists at the path, then data is initially loaded from the file) (cannot be {@code null})
+     * @throws IOException If an error occurrs with opening the file at the given path
+     * @throws NullPointerException If {@code path} is {@code null}
+     * @throws IllegalArgumentException If a file exists at the given path and is formatted incorrectly
      */
-    public WorkTracker(File file) throws IOException
+    public WorkTracker(String path) throws IOException
     {
-        Objects.requireNonNull(file, "File cannot be null");
+        Objects.requireNonNull(path, "Path cannot be null");
 
-        this.destinationPath = Paths.get(file.getPath());
+        this.destinationPath = Paths.get(path);
+        File file = new File(path);
         if (!file.exists())
         {
             this.jobLookUp = new HashMap<>();
@@ -94,13 +95,12 @@ public class WorkTracker
             this.jobLookUp = new HashMap<>();
             this.shifts = new HashMap<>();
 
-            initFieldsFromFile(scanner, file.getPath());
+            initFieldsFromFile(scanner, path);
             System.out.println("Existing data loaded successfully.");
         }
         catch (IOException e)
         {
             System.out.println("An unexpected file error occurred.");
-            System.out.println(e);
         }
     }
 

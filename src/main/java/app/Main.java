@@ -1,6 +1,5 @@
 package app;
 
-import java.io.File;
 import java.io.IOException;
 
 public class Main
@@ -26,7 +25,7 @@ public class Main
         }
         try
         {
-            MenuManager menuManager = new MenuManager(new File(path));
+            MenuManager menuManager = new MenuManager(path);
             menuManager.run();
         }
         catch (IOException e)
