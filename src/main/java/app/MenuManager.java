@@ -765,6 +765,66 @@ public class MenuManager
     }
 
     /**
+     * Gets the positive integer sitting right before a letter in a String.
+     * <p>
+     * Eg. If the fullString was "21b 56d 9247h" and letter was 'd', the Integer 56 would be returned. This would also work if fullString did not have spaces.
+     * <p>
+     * Eg 2. If the fullString was "21b 56d 9247h" and letter was 'e', {@code null} would be returned. {@code null} will also be returned if there is no valid number before the letter.
+     * 
+     * @param fullString The String to search through (cannot be {@code null})
+     * @param letter The letter to get the integer before it (does not have to exist in {@code fullString})
+     * @return The Integer that is right before the letter {@code letter} in {@code fullString}. Will be {@code null} if {@code letter} is not in {@code fullString} or there is no positive integer before {@code letter} in {@code fullString}
+     * @throws NullPointerException If {@code fullString} is {@code null}
+     */
+    private static Integer getIntegerBeforeLetterInString(String fullString, char letter)
+    {
+        Objects.requireNonNull(fullString, "FullString cannot be null");
+
+        int letterIndex = fullString.indexOf(letter);
+        if (letterIndex == -1) return null;
+
+        int integerStartIndex = letterIndex;
+        while (integerStartIndex > 0 && Character.isDigit(fullString.charAt(integerStartIndex - 1)))
+            integerStartIndex--;
+
+        String integerString = fullString.substring(integerStartIndex, letterIndex);
+        if (!Utility.isInteger(integerString)) return null;
+
+        return Integer.valueOf(integerString);
+    }
+
+    /**
+     * Parses a String representing a manual duration. Manual duration is specified because Durations are formatted differently.
+     * <p>
+     * Manual duration Strings should be in the format 'xd xh xm xs' where x is any non-negative integer, d represents days, h represents hours, m represnts minutes, and s represents seconds. Not every part must be included.
+     * Parts not included are treated as 0.
+     * 
+     * @param durationString The String representing a manual duration
+     * @return The {@code Duration} represented by the durationString (will never be {@code null})
+     * @throws NullPointerException If {@code durationString} is {@code null}
+     */
+    private static Duration parseManualDuration(String durationString)
+    {
+        Objects.requireNonNull(durationString);
+
+        Integer days = getIntegerBeforeLetterInString(durationString, 'd');
+        if (days == null) days = 0;
+
+        Integer hours = getIntegerBeforeLetterInString(durationString, 'h');
+        if (hours == null) hours = 0;
+
+        Integer minutes = getIntegerBeforeLetterInString(durationString, 'm');
+        if (minutes == null) minutes = 0;
+
+        Integer seconds = getIntegerBeforeLetterInString(durationString, 's');
+        if (seconds == null) seconds = 0;
+
+        long totalSeconds = days * 86400l + hours * 3600l + minutes * 60l + seconds;
+        Duration duration = Duration.ofSeconds(totalSeconds);
+        return duration;
+    }
+
+    /**
      * Gets a duration from user input.
      * 
      * @param name The name shown when prompting the user
@@ -776,25 +836,15 @@ public class MenuManager
         Objects.requireNonNull(name, "Name cannot be null");
 
         Duration duration = null;
+        System.out.println("The duration should be in the following format: 'xd xh xm xs' where x is any non-negative integer, d represents days, h represents hours, m represnts minutes, and s represents seconds. You do not have to include every part.");
         while (duration == null)
         {
-            Integer hours = getNonNegativeInteger("Enter the number of hours the " + name + " was ('!' to exit): ");
-            if (hours == null) return null;
+            System.out.print("Enter the duration the " + name + " was ('!' to exit): ");
+            String durationString = scanner.nextLine().strip();
+            duration = parseManualDuration(durationString);
 
-            Integer minutes = getNonNegativeInteger("Enter the number of minutes the " + name + " was ('!' to exit): ");
-            if (minutes == null) return null;
-
-            Integer seconds = getNonNegativeInteger("Enter the number of seconds the " + name + " was ('!' to exit): ");
-            if (seconds == null) return null;
-
-            duration = Duration.ofHours(hours);
-            duration = duration.plus(Duration.ofMinutes(minutes));
-            duration = duration.plus(Duration.ofSeconds(seconds));
-            if (duration.isZero())
-            {
-                System.out.print("The duration is 0. Are you sure this is what you want? ('y' for yes, anything else for no): ");
-                if (!scanner.nextLine().strip().equalsIgnoreCase("Y")) duration = null;
-            }
+            System.out.print("The duration is " + Utility.formatDuration(duration) + " long. Are you sure this is what you want? ('y' for yes, anything else for no): ");
+            if (!scanner.nextLine().strip().equalsIgnoreCase("Y")) duration = null;
         }
         return duration;
     }
@@ -1256,6 +1306,7 @@ public class MenuManager
         Menu shiftMenu = new Menu("Shifts:");
         for (Shift shiftOption : shiftOptions)
             shiftMenu.addOption(shiftOption.display(DisplayMode.Times));
+        System.out.println("--Choose a shift--");
         int choice = shiftMenu.display();
         if (choice == 0)
         {
